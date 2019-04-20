@@ -3,21 +3,26 @@
 #include <iostream>
 #include <string>
 
+enum	TokenType
+{
+	NUMBER,
+	VARIABLE,
+	PLUS,
+	MINUS,
+	MULTIPLY,
+	DIVIDE,
+	POWER,
+	MODULO,
+	LPAREN,
+	RPAREN,
+	EQUAL,
+	ERROR,
+	END
+};
 
 struct Token
 {
-	enum
-	{
-		NUMBER,
-		OPERATOR,
-		VARIABLE,
-		EQUAL,
-		LPAREN,
-		RPAREN,
-		ERROR,
-		END
-	}	type;
-
+	enum TokenType type;
 	boost::variant
 	<
 		char,
