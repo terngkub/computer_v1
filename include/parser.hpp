@@ -8,8 +8,11 @@ class Parser
 	Lexer &	lexer;
 	Token *	current_token;
 
-	INode *	priority1();
-	INode * priority2();
+	INode * expression();
+	INode * term();
+	INode * power();
+	INode * factor();
+
 
 public:
 	Parser(Lexer &);

@@ -7,35 +7,80 @@ Parser::Parser(Lexer & lexer) :
 
 INode * Parser::parse()
 {
-	return priority1();
+	return expression();
 }
 
-// prority_1: POWER
-INode * Parser::priority1()
+// PLUS, MINUS
+INode * Parser::expression()
 {
-	INode * node = priority2();
-	current_token = lexer.get_next_token();
-	OperationNode * power_node = new OperationNode(TokenType::POWER, node, priority2());
-	return power_node;
-}
+	INode * node = term();
 
-// priority2: NUMBER
-INode * Parser::priority2()
-{
-	TermNode * node = new TermNode(boost::get<double>(current_token->value));
-	current_token = lexer.get_next_token();
+	while (current_token->type == TokenType::PLUS
+			|| current_token->type == TokenType::MINUS)
+	{
+		TokenType token_type = current_token->type;
+		current_token = lexer.get_next_token();
+		INode * right = term();
+		node = new OperationNode(token_type, node, right);
+	}
 	return node;
 }
 
+// MULTIPLY, DIVIDE
+INode * Parser::term()
+{
+	INode * node = power();
 
-/*
-=
-^
-* /
-+ -
-number / variable
+	while (current_token->type == TokenType::MULTIPLY
+			|| current_token->type == TokenType::DIVIDE
+			|| current_token->type == TokenType::MODULO)
+	{
+		TokenType token_type = current_token->type;
+		current_token = lexer.get_next_token();
+		INode * right = power();
+		node = new OperationNode(token_type, node, right);
+	}
+	return node;
+}
 
-future
-modulo
-parenthesis
-*/
+// POWER
+INode * Parser::power()
+{
+	INode * node = factor();
+
+	while (current_token->type == TokenType::POWER)
+	{
+		TokenType token_type = current_token->type;
+		current_token = lexer.get_next_token();
+		INode * right = factor();
+		node = new OperationNode(token_type, node, right);
+	}
+	return node;
+}
+
+// NUMBER, VARIABLE
+INode * Parser::factor()
+{
+	INode * node = nullptr;
+	if (current_token->type == TokenType::NUMBER)
+	{
+		node = new TermNode(boost::get<double>(current_token->value));
+		current_token = lexer.get_next_token();
+	}
+	else if (current_token->type == TokenType::VARIABLE)
+	{
+		node = new TermNode(boost::get<std::string>(current_token->value));
+		current_token = lexer.get_next_token();
+	}
+	else if (current_token->type == TokenType::LPAREN)
+	{
+		current_token = lexer.get_next_token();
+		node = expression();
+		if (current_token->type != RPAREN) {
+			std::cerr << "Unmatch parenthesis";
+			exit(1);
+		}
+		current_token = lexer.get_next_token();
+	}
+	return node;
+}

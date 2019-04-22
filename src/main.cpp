@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include <string>
 
 void test_token()
 {
@@ -15,7 +16,7 @@ void test_token()
 void test_lexer()
 {
     std::string input;
-    std::cin >> input;
+    getline(std::cin, input);
 
     Lexer lexer(input);
     Token * token = lexer.get_next_token();
@@ -29,7 +30,9 @@ void test_lexer()
 
 void test_parser()
 {
-    std::string input = "3^2";
+    std::string input;
+    getline(std::cin, input);
+
     Lexer lexer(input);
     Parser parser(lexer);
     INode * node = parser.parse();

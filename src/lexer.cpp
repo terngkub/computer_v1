@@ -42,7 +42,8 @@ Token * Lexer::get_next_token()
 	if (it == str.end())
 		return new Token{TokenType::END, "end"};
 	
-	if (isdigit(*it) || (*it == '-' && it + 1 != str.end() && isdigit(*(it + 1))))
+	// if (isdigit(*it) || (*it == '-' && it + 1 != str.end() && isdigit(*(it + 1))))
+	if (isdigit(*it))
 		return get_number();
 	if (isalpha(*it))
 		return get_variable();
@@ -56,6 +57,8 @@ Token * Lexer::get_next_token()
 			return new Token{TokenType::MULTIPLY, *it++};
 		case '/':
 			return new Token{TokenType::DIVIDE, *it++};
+		case '%':
+			return new Token{TokenType::MODULO, *it++};
 		case '^':
 			return new Token{TokenType::POWER, *it++};
 		case '=':

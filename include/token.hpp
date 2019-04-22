@@ -11,14 +11,16 @@ enum	TokenType
 	MINUS,
 	MULTIPLY,
 	DIVIDE,
-	POWER,
 	MODULO,
+	POWER,
 	LPAREN,
 	RPAREN,
 	EQUAL,
 	ERROR,
 	END
 };
+
+std::ostream & operator<<(std::ostream & o, TokenType const & t);
 
 struct Token
 {

@@ -9,10 +9,12 @@ public:
 
 class TermNode : public INode
 {
-	double	coef;
-	int		power;
+	std::string	name;
+	double		coef;
+	int			power;
 
 public:
+	TermNode(std::string name);
 	TermNode(double coef);
 	void print();
 };
