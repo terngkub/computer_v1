@@ -26,7 +26,7 @@ INode * Parser::expression()
 	return node;
 }
 
-// MULTIPLY, DIVIDE
+// MULTIPLY, DIVIDE, MODULO
 INode * Parser::term()
 {
 	INode * node = power();

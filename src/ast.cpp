@@ -12,6 +12,12 @@ TermNode::TermNode(double coef) :
 	power(0)
 {}
 
+TermNode::TermNode(double coef, int power) :
+	name(""),
+	coef(coef),
+	power(power)
+{}
+
 void TermNode::print()
 {
 	if (power == 0)

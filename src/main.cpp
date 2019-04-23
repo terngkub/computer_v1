@@ -1,5 +1,6 @@
 #include "main.hpp"
 #include <string>
+#include "interpreter.hpp"
 
 void test_token()
 {
@@ -39,7 +40,19 @@ void test_parser()
     node->print();
 }
 
+void test_interpreter()
+{
+    std::string input;
+    getline(std::cin, input);
+
+    Lexer lexer(input);
+    Parser parser(lexer);
+    INode * ast = parser.parse();
+    auto interpreter = Interpreter(ast);
+    interpreter.interpret();
+}
+
 int main()
 {
-    test_parser();
+    test_interpreter();
 }

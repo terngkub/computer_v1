@@ -1,21 +1,22 @@
 #pragma once
 #include "token.hpp"
 
-class INode
+struct INode
 {
 public:
 	virtual void print() {};
 };
 
-class TermNode : public INode
+struct TermNode : public INode
 {
 	std::string	name;
 	double		coef;
 	int			power;
 
-public:
 	TermNode(std::string name);
 	TermNode(double coef);
+	TermNode(double coef, int power);
+
 	void print();
 };
 
@@ -25,7 +26,7 @@ struct OperationNode : public INode
 	INode *			left;
 	INode *			right;
 
-public:
 	OperationNode(enum TokenType, INode *, INode *);
+
 	void print();
 };

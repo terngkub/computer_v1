@@ -2,7 +2,12 @@ CC = g++
 CFLAGS = -Wall -Wextra -Werror -g3
 
 NAME = computor
-FILE = main.cpp token.cpp lexer.cpp ast.cpp parser.cpp
+FILE =	main.cpp \
+		token.cpp \
+		lexer.cpp \
+		ast.cpp \
+		parser.cpp \
+		interpreter.cpp
 
 SRC_DIR = src
 SRC = $(addprefix $(SRC_DIR)/,$(FILE))
