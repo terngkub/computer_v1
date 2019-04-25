@@ -2,12 +2,33 @@
 
 Parser::Parser(Lexer & lexer) :
 	lexer(lexer),
-	current_token(this->lexer.get_next_token())
+	current_token(this->lexer.get_next_token()),
+	has_equal(false)
 {}
 
 INode * Parser::parse()
 {
-	return expression();
+	return equation();
+}
+
+// EQUAL
+INode * Parser::equation()
+{
+	INode * node = expression();
+
+	while (current_token->type == TokenType::EQUAL)
+	{
+		if (has_equal)
+            throw std::runtime_error("has more than one equal sign");
+		else
+			has_equal = true;
+		
+		TokenType token_type = current_token->type;
+		current_token = lexer.get_next_token();
+		INode * right = expression();
+		node = new OperationNode(token_type, node, right);
+	}
+	return node;
 }
 
 // PLUS, MINUS

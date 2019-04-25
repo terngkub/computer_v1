@@ -73,6 +73,7 @@ INode * Interpreter::visit(INode * node)
         }
 
         case TokenType::EQUAL:
+            std::cout << "equal\n";
             update_term_map(left, true);
             update_term_map(right, false);
             break;
@@ -108,6 +109,21 @@ void Interpreter::print_map()
     for (auto it = term_map.begin(); it != term_map.end(); ++it)
         std::cout << it->first << ": " << it->second << '\n';
 }
+
+void Interpreter::solve_polynomial_equation()
+{
+    if (*term_map.rbegin() > 2)
+    {
+        std::cerr << "can't calculate the result because there is a term that have power more than 2";
+        return ;
+    }
+    if (*term_map.begin() < 0)
+    {
+        std::cerr << "can't calculate the result because there is a term that have power less than 0";
+        return ;
+    }
+}
+
 
 void Interpreter::interpret()
 {

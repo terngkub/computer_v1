@@ -4,6 +4,7 @@
 struct INode
 {
 public:
+	~INode() {};
 	virtual void print() {};
 };
 
