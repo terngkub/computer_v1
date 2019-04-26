@@ -1,4 +1,5 @@
 #include "interpreter.hpp"
+#include <cmath>
 
 double power(double base, int power)
 {
@@ -39,8 +40,6 @@ INode * Interpreter::visit(INode * node)
         {
             auto coef = left->coef * right->coef;
             auto power = left->power + right->power;
-            right->print();
-            std::cout << "\nprint: " << coef << "^" << power << "\n";
             return (new TermNode(coef, power));
         }
 
@@ -73,7 +72,6 @@ INode * Interpreter::visit(INode * node)
         }
 
         case TokenType::EQUAL:
-            std::cout << "equal\n";
             update_term_map(left, true);
             update_term_map(right, false);
             break;
@@ -89,19 +87,21 @@ void Interpreter::update_term_map(TermNode * node, bool is_plus)
 {
     if (node == nullptr)
         return ;
-    if (is_plus)
-        std::cout << "plus: ";
-    else
-        std::cout << "minus: ";
-    node->print();
-    std::cout << "\n";
+    
     if (term_map.find(node->power) == term_map.end())
-        term_map[node->power] = node->coef;
-    else if (is_plus)
-        term_map[node->power] += node->coef;
+    {
+        if (is_plus)
+            term_map[node->power] = node->coef;
+        else
+            term_map[node->power] = -node->coef;
+    }
     else
-        term_map[node->power] -= node->coef;
-    std::cout << "power: " << node->power << " coef: " << term_map[node->power] << "\n";
+    {
+        if (is_plus)
+            term_map[node->power] += node->coef;
+        else
+            term_map[node->power] -= node->coef;
+    }
 }
 
 void Interpreter::print_map()
@@ -109,21 +109,51 @@ void Interpreter::print_map()
     for (auto it = term_map.begin(); it != term_map.end(); ++it)
         std::cout << it->first << ": " << it->second << '\n';
 }
+void Interpreter::solve()
+{
+    if (!is_valid_equation())
+        return ;
+    int max_degree = (*term_map.rbegin()).first;
+    if (max_degree == 2)
+        solve_polynomial_equation();
+    else if (max_degree == 1)
+        solve_linear_equation();
+    else if (max_degree == 0)
+        std::cout << (*term_map.rbegin()).second << '\n';
+}
+
+bool Interpreter::is_valid_equation()
+{
+    if ((*term_map.rbegin()).first > 2)
+    {
+        std::cerr << "highest degree is more than 2";
+        return false;
+    }
+    if ((*term_map.begin()).first < 0)
+    {
+        std::cerr << "lowest degree is less than 0";
+        return false;
+    }
+    return true;
+}
 
 void Interpreter::solve_polynomial_equation()
 {
-    if (*term_map.rbegin() > 2)
-    {
-        std::cerr << "can't calculate the result because there is a term that have power more than 2";
-        return ;
-    }
-    if (*term_map.begin() < 0)
-    {
-        std::cerr << "can't calculate the result because there is a term that have power less than 0";
-        return ;
-    }
+    double a = term_map[2];
+    double b = term_map[1];
+    double c = term_map[0];
+    double ret_one = (-b + sqrt(power(b, 2) - 4 * a * c)) / (2 * a);
+    double ret_two = (-b - sqrt(power(b, 2) - 4 * a * c)) / (2 * a);
+    std::cout << "x = " << ret_one << ", " << ret_two << '\n';
 }
 
+void Interpreter::solve_linear_equation()
+{
+    if (term_map.find(0) != term_map.end())
+        std::cout << "x = " << -term_map[0] / term_map[1] << '\n';
+    else
+        std::cout << "x = 0\n";
+}
 
 void Interpreter::interpret()
 {
@@ -131,4 +161,5 @@ void Interpreter::interpret()
     if (node != nullptr)
         update_term_map(node, true);
     print_map();
+    solve();
 }

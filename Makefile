@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -Wextra -Werror -g3
+CFLAGS = -Wall -Wextra -Werror -std=c++11 -g3
 
 NAME = computor
 FILE =	main.cpp \
