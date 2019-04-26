@@ -85,12 +85,12 @@ INode * Parser::factor()
 	INode * node = nullptr;
 	if (current_token->type == TokenType::NUMBER)
 	{
-		node = new TermNode(boost::get<double>(current_token->value));
+		node = new TermNode(current_token->num_value);
 		current_token = lexer.get_next_token();
 	}
 	else if (current_token->type == TokenType::VARIABLE)
 	{
-		node = new TermNode(boost::get<std::string>(current_token->value));
+		node = new TermNode(current_token->str_value);
 		current_token = lexer.get_next_token();
 	}
 	else if (current_token->type == TokenType::LPAREN)

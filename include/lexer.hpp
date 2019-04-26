@@ -3,15 +3,16 @@
 #include <string>
 #include "token.hpp"
 
-class Lexer
+struct Lexer
 {
+    Lexer(std::string);
+    Token * get_next_token();
+
+private:
     std::string str;
     std::string::iterator it;
 
 	Token * get_number();
     Token * get_variable();
-
-public:
-    Lexer(std::string);
-    Token * get_next_token();
+    Token * get_error();
 };

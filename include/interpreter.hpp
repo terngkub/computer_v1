@@ -1,6 +1,7 @@
 #pragma once
 #include "ast.hpp"
 #include <string>
+#include <map>
 
 
 class Interpreter

@@ -21,6 +21,8 @@ struct TermNode : public INode
 	void print();
 };
 
+std::ostream & operator<<(std::ostream & o, TermNode const & t);
+
 struct OperationNode : public INode
 {
 	enum TokenType	op;

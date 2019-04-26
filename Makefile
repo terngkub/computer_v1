@@ -12,7 +12,7 @@ FILE =	main.cpp \
 SRC_DIR = src
 SRC = $(addprefix $(SRC_DIR)/,$(FILE))
 
-INC = -I boost -I include
+INC = -I include
 
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/,$(FILE:%.cpp=%.o))

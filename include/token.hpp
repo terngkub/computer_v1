@@ -1,5 +1,4 @@
 #pragma once
-#include <boost/variant.hpp>
 #include <iostream>
 #include <string>
 
@@ -7,6 +6,7 @@ enum	TokenType
 {
 	NUMBER,
 	VARIABLE,
+
 	PLUS,
 	MINUS,
 	MULTIPLY,
@@ -16,6 +16,7 @@ enum	TokenType
 	LPAREN,
 	RPAREN,
 	EQUAL,
+
 	ERROR,
 	END
 };
@@ -24,13 +25,13 @@ std::ostream & operator<<(std::ostream & o, TokenType const & t);
 
 struct Token
 {
-	enum TokenType type;
-	boost::variant
-	<
-		char,
-		double,
-		std::string
-	>	value;
+	Token(enum TokenType type);
+	Token(enum TokenType type, double num_value);
+	Token(enum TokenType type, std::string str_value);
+
+	enum TokenType	type;
+	double			num_value;
+	std::string		str_value;
 };
 
 std::ostream & operator<<(std::ostream & o, Token const & t);
