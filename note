@@ -1,0 +1,19 @@
+solving equation >> done
+checking if I can use std::variant instead of boost::variant >> waiting for brew install
+implement square root
+storing and checking variable name
+handle plus and minus on the right side of equal sign
+handle negative number
+parsing 2x as 2*x
+unit test
+output history
+
+bonus
+- natural form
+- handle all operation
+- can also evaluate expression when it's not polynomial
+- real lexer parser
+- handle negative number ?
+- handle modulo
+- handle imaginary number result
+- output step
