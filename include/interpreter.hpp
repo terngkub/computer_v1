@@ -12,6 +12,10 @@ class Interpreter
     INode * visit(INode * node);
     void update_term_map(TermNode * node, bool is_plus);
     void print_map();
+    void solve();
+    bool is_valid_equation();
+    void solve_polynomial_equation();
+    void solve_linear_equation();
 
 public:
     Interpreter(INode *);
