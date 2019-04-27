@@ -1,15 +1,5 @@
 #include "interpreter.hpp"
-#include <cmath>
-
-double power(double base, int power)
-{
-    if (power == 0)
-        return 1;
-    double ret = base;
-    while (--power)
-        ret *= base;
-    return ret;
-}
+#include "math.hpp"
 
 Interpreter::Interpreter(INode * ast) :
     ast(ast)

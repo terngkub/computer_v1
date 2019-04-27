@@ -3,6 +3,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++11 -g3
 
 NAME = computor
 FILE =	main.cpp \
+		math.cpp \
 		token.cpp \
 		lexer.cpp \
 		ast.cpp \

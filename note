@@ -1,6 +1,6 @@
 solving equation >> done
-checking if I can use std::variant instead of boost::variant >> waiting for brew install
-implement square root
+checking if I can use std::variant instead of boost::variant >> done
+implement square root >> done
 storing and checking variable name
 handle plus and minus on the right side of equal sign
 handle negative number
