@@ -1,12 +1,14 @@
 solving equation >> done
 checking if I can use std::variant instead of boost::variant >> done
 implement square root >> done
-storing and checking variable name
+storing and checking variable name >>> done
 handle plus and minus on the right side of equal sign
-handle negative number
 parsing 2x as 2*x
+handle negative number
+improve error message
 unit test
 output history
+imaginary result
 
 bonus
 - natural form

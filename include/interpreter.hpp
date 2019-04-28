@@ -7,7 +7,7 @@
 class Interpreter
 {
     INode * ast;
-    std::string name;
+    std::string var_name;
     std::map<int, double> term_map;
 
     INode * visit(INode * node);

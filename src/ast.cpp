@@ -47,3 +47,7 @@ void OperationNode::print()
 	right->print();
 	std::cout << ")";
 }
+
+ErrorNode::ErrorNode(std::string message) :
+	message(message)
+{}

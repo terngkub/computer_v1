@@ -48,6 +48,13 @@ void test_interpreter()
     Lexer lexer(input);
     Parser parser(lexer);
     INode * ast = parser.parse();
+    auto err = dynamic_cast<ErrorNode *>(ast);
+    if (err)
+    {
+        std::cerr << err->message << '\n';
+        return ;
+    }
+        
     auto interpreter = Interpreter(ast);
     interpreter.interpret();
 }

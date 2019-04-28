@@ -1,5 +1,6 @@
 #pragma once
 #include "token.hpp"
+#include <string>
 
 struct INode
 {
@@ -32,4 +33,11 @@ struct OperationNode : public INode
 	OperationNode(enum TokenType, INode *, INode *);
 
 	void print();
+};
+
+struct ErrorNode : public INode
+{
+	std::string message;
+
+	ErrorNode(std::string message);
 };

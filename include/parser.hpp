@@ -3,20 +3,24 @@
 #include "lexer.hpp"
 #include "token.hpp"
 
-class Parser
+
+struct Parser
 {
-	Lexer &	lexer;
-	Token *	current_token;
-	bool has_equal;
-
-	INode * equation();
-	INode * expression();
-	INode * term();
-	INode * power();
-	INode * factor();
-
-
-public:
 	Parser(Lexer &);
 	INode * parse();
+
+private:
+	typedef INode * (Parser::*ParserFunc)();
+
+	Lexer &		lexer;
+	Token *		current_token;
+	std::string	var_name;
+	bool		has_equal;
+
+	INode *		equation();
+	INode *		expression();
+	INode *		term();
+	INode *		power();
+	INode *		factor();
+
 };
