@@ -7,118 +7,133 @@ Parser::Parser(Lexer & lexer) :
 	has_equal(false)
 {}
 
-INode * Parser::parse()
+std::shared_ptr<INode> Parser::parse()
 {
-	INode * ast = equation();
-	if (dynamic_cast<ErrorNode *>(ast))
+	std::shared_ptr<INode> ast = equation();
+	if (is_error(ast))
 		return ast;
 	if (current_token->type != TokenType::END)
-		return new ErrorNode("not ending");
+		return error("not ending");
 	return ast;
 }
 
-// EQUAL
-INode * Parser::equation()
+// ERROR
+std::shared_ptr<INode> Parser::error(std::string error_message)
 {
-	INode * node = expression();
+	return std::dynamic_pointer_cast<INode>(std::make_shared<ErrorNode>(error_message));
+}
 
-	while (dynamic_cast<ErrorNode *>(node) == nullptr
-			&&current_token->type == TokenType::EQUAL)
+bool Parser::is_error(std::shared_ptr<INode> node)
+{
+	return (std::dynamic_pointer_cast<ErrorNode>(node) != nullptr) ? true : false;
+}
+
+// EQUAL
+std::shared_ptr<INode> Parser::equation()
+{
+	std::shared_ptr<INode> node = expression();
+
+	while (!is_error(node) && current_token->type == TokenType::EQUAL)
 	{
 		if (has_equal)
-			return new ErrorNode("statement has more than one equal sign");
+			return error("statement has more than one equal sign");
 		else
 			has_equal = true;
 		
 		TokenType token_type = current_token->type;
 		current_token = lexer.get_next_token();
-		INode * right = expression();
-		ErrorNode * err = dynamic_cast<ErrorNode *>(right);
+
+		std::shared_ptr<INode> right = expression();
+
+		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
-			return new ErrorNode(err->message);
+			return error(err->message);
 		else
-			node = new OperationNode(token_type, node, right);
+			node = std::make_shared<OperationNode>(token_type, node, right);
 	}
 	return node;
 }
 
 // PLUS, MINUS
-INode * Parser::expression()
+std::shared_ptr<INode> Parser::expression()
 {
-	INode * node = term();
+	std::shared_ptr<INode> node = term();
 
-	while (dynamic_cast<ErrorNode *>(node) == nullptr
+	while (!is_error(node)
 			&& (current_token->type == TokenType::PLUS
 			|| current_token->type == TokenType::MINUS))
 	{
 		TokenType token_type = current_token->type;
 		current_token = lexer.get_next_token();
-		INode * right = term();
-		auto err = dynamic_cast<ErrorNode *>(right);
+		std::shared_ptr<INode> right = term();
+
+		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
-			return new ErrorNode(err->message);
+			return error(err->message);
 		else
-			node = new OperationNode(token_type, node, right);
+			node = std::make_shared<OperationNode>(token_type, node, right);
 	}
 	return node;
 }
 
 // MULTIPLY, DIVIDE, MODULO
-INode * Parser::term()
+std::shared_ptr<INode> Parser::term()
 {
-	INode * node = power();
+	std::shared_ptr<INode> node = power();
 
-	while (dynamic_cast<ErrorNode *>(node) == nullptr
+	while (!is_error(node)
 			&& (current_token->type == TokenType::MULTIPLY
 			|| current_token->type == TokenType::DIVIDE
 			|| current_token->type == TokenType::MODULO))
 	{
 		TokenType token_type = current_token->type;
 		current_token = lexer.get_next_token();
-		INode * right = power();
-		auto err = dynamic_cast<ErrorNode *>(right);
+		std::shared_ptr<INode> right = power();
+
+		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
-			return new ErrorNode(err->message);
+			return error(err->message);
 		else
-			node = new OperationNode(token_type, node, right);
+			node = std::make_shared<OperationNode>(token_type, node, right);
 	}
 	return node;
 }
 
 // POWER
-INode * Parser::power()
+std::shared_ptr<INode> Parser::power()
 {
-	INode * node = factor();
+	std::shared_ptr<INode> node = factor();
 
-	while (dynamic_cast<ErrorNode *>(node) == nullptr
+	while (!is_error(node)
 			&& current_token->type == TokenType::POWER)
 	{
 		TokenType token_type = current_token->type;
 		current_token = lexer.get_next_token();
-		INode * right = factor();
-		auto err = dynamic_cast<ErrorNode *>(right);
+		std::shared_ptr<INode> right = factor();
+
+		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
-			return new ErrorNode(err->message);
+			return error(err->message);
 		else
 		{
 			// check combination
-			auto right_node = dynamic_cast<TermNode *>(right);
+			auto right_node = std::dynamic_pointer_cast<TermNode>(right);
 			if (right_node != nullptr && right_node->name != "")
-				return new ErrorNode("degree can't be variable");
+				return error("degree can't be variable");
 
-			node = new OperationNode(token_type, node, right);
+			node = std::make_shared<OperationNode>(token_type, node, right);
 		}
 	}
 	return node;
 }
 
 // NUMBER, VARIABLE
-INode * Parser::factor()
+std::shared_ptr<INode> Parser::factor()
 {
-	INode * node = nullptr;
+	std::shared_ptr<INode> node = nullptr;
 	if (current_token->type == TokenType::NUMBER)
 	{
-		node = new TermNode(current_token->num_value);
+		node = std::make_shared<TermNode>(current_token->num_value);
 		current_token = lexer.get_next_token();
 	}
 	else if (current_token->type == TokenType::VARIABLE)
@@ -127,8 +142,8 @@ INode * Parser::factor()
 		if (var_name == "")
 			var_name = name;
 		else if (var_name != name)
-			return new ErrorNode("too much variable");
-		node = new TermNode(current_token->str_value);
+			return error("too much variable");
+		node = std::make_shared<TermNode>(current_token->str_value);
 		current_token = lexer.get_next_token();
 	}
 	else if (current_token->type == TokenType::LPAREN)
@@ -137,11 +152,11 @@ INode * Parser::factor()
 		node = expression();
 
 		if (current_token->type != RPAREN)
-			node = new ErrorNode("parenthesis not matching");
+			node = error("parenthesis not matching");
 		else
 			current_token = lexer.get_next_token();
 	}
 	else
-		node = new ErrorNode("invalid type");
+		node = error("invalid type");
 	return node;
 }

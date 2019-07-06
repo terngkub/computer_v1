@@ -20,7 +20,7 @@ void test_lexer()
     getline(std::cin, input);
 
     Lexer lexer(input);
-    Token * token = lexer.get_next_token();
+    auto token = lexer.get_next_token();
 
     while (token->type != TokenType::ERROR && token->type != TokenType::END)
     {
@@ -36,7 +36,7 @@ void test_parser()
 
     Lexer lexer(input);
     Parser parser(lexer);
-    INode * node = parser.parse();
+    auto node = parser.parse();
     node->print();
 }
 
@@ -47,8 +47,8 @@ void test_interpreter()
 
     Lexer lexer(input);
     Parser parser(lexer);
-    INode * ast = parser.parse();
-    auto err = dynamic_cast<ErrorNode *>(ast);
+    auto ast = parser.parse();
+    auto err = std::dynamic_pointer_cast<ErrorNode>(ast);
     if (err)
     {
         std::cerr << err->message << '\n';

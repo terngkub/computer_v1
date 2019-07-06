@@ -1,5 +1,6 @@
 #pragma once
 #include "token.hpp"
+#include <memory>
 #include <string>
 
 struct INode
@@ -26,11 +27,11 @@ std::ostream & operator<<(std::ostream & o, TermNode const & t);
 
 struct OperationNode : public INode
 {
-	enum TokenType	op;
-	INode *			left;
-	INode *			right;
+	enum TokenType			op;
+	std::shared_ptr<INode>	left;
+	std::shared_ptr<INode>	right;
 
-	OperationNode(enum TokenType, INode *, INode *);
+	OperationNode(enum TokenType, std::shared_ptr<INode>, std::shared_ptr<INode>);
 
 	void print();
 };

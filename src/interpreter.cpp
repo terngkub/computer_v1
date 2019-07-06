@@ -1,18 +1,18 @@
 #include "interpreter.hpp"
 #include "math.hpp"
 
-Interpreter::Interpreter(INode * ast) :
+Interpreter::Interpreter(std::shared_ptr<INode> ast) :
     ast(ast)
 {}
 
-INode * Interpreter::visit(INode * node)
+std::shared_ptr<INode> Interpreter::visit(std::shared_ptr<INode> node)
 {
-    if (dynamic_cast<TermNode *>(node) != nullptr)
+    if (std::dynamic_pointer_cast<TermNode>(node) != nullptr)
         return node;
-    auto op_node = dynamic_cast<OperationNode *>(node);
+    auto op_node = std::dynamic_pointer_cast<OperationNode>(node);
 
-    auto left = dynamic_cast<TermNode *>(visit(op_node->left));
-    auto right = dynamic_cast<TermNode *>(visit(op_node->right));
+    auto left = std::dynamic_pointer_cast<TermNode>(visit(op_node->left));
+    auto right = std::dynamic_pointer_cast<TermNode>(visit(op_node->right));
 
     switch(op_node->op)
     {
@@ -30,7 +30,7 @@ INode * Interpreter::visit(INode * node)
         {
             auto coef = left->coef * right->coef;
             auto power = left->power + right->power;
-            return (new TermNode(coef, power));
+            return std::make_shared<TermNode>(coef, power);
         }
 
         case TokenType::DIVIDE:
@@ -39,7 +39,7 @@ INode * Interpreter::visit(INode * node)
                 throw std::runtime_error("divide by zero");
             auto coef = left->coef / right->coef;
             auto power = left->power - right->power;
-            return (new TermNode(coef, power));
+            return std::make_shared<TermNode>(coef, power);
         }
 
         case TokenType::POWER:
@@ -47,12 +47,12 @@ INode * Interpreter::visit(INode * node)
             if (left->power == 0 and right->power == 0)
             {
                 auto coef = power(left->coef, right->coef);
-                return (new TermNode(coef, 0));
+                return std::make_shared<TermNode>(coef, 0);
 
             }
             else if (left->power != 0 and right->power == 0)
             {
-                return (new TermNode(left->coef, right->coef));
+                return std::make_shared<TermNode>(left->coef, right->coef);
             }
             else
             {
@@ -73,7 +73,7 @@ INode * Interpreter::visit(INode * node)
 }
 
 
-void Interpreter::update_term_map(TermNode * node, bool is_plus)
+void Interpreter::update_term_map(std::shared_ptr<TermNode> node, bool is_plus)
 {
     if (node == nullptr)
         return ;
@@ -147,7 +147,7 @@ void Interpreter::solve_linear_equation()
 
 void Interpreter::interpret()
 {
-    auto node = dynamic_cast<TermNode *>(visit(ast));
+    auto node = std::dynamic_pointer_cast<TermNode>(visit(ast));
     if (node != nullptr)
         update_term_map(node, true);
     print_map();

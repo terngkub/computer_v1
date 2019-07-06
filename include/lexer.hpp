@@ -1,18 +1,19 @@
 #pragma once
 #include <iterator>
+#include <memory>
 #include <string>
 #include "token.hpp"
 
 struct Lexer
 {
     Lexer(std::string);
-    Token * get_next_token();
+    std::shared_ptr<Token> get_next_token();
 
 private:
     std::string str;
     std::string::iterator it;
 
-	Token * get_number();
-    Token * get_variable();
-    Token * get_error();
+	std::shared_ptr<Token> get_number();
+    std::shared_ptr<Token> get_variable();
+    std::shared_ptr<Token> get_error();
 };

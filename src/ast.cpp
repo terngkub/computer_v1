@@ -33,7 +33,7 @@ void TermNode::print()
 	}
 }
 
-OperationNode::OperationNode(enum TokenType op, INode * left, INode * right) :
+OperationNode::OperationNode(enum TokenType op, std::shared_ptr<INode> left, std::shared_ptr<INode> right) :
 	op(op),
 	left(left),
 	right(right)
