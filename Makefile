@@ -29,6 +29,13 @@ $(OBJ_DIR):
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+TEST_DIR = test
+
+test: $(TEST_DIR)/*.cpp
+	$(CC) $(INC) -o test.out src/token.cpp src/lexer.cpp test/test_lexer.cpp test/test_main.cpp
+	./test.out
+	rm -f test.out
+
 clean:
 	rm -rf $(OBJ_DIR)
 
