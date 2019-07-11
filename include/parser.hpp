@@ -19,7 +19,6 @@ private:
 	bool					has_equal;
 
 	std::shared_ptr<INode>	error(std::string error_message);
-	bool					is_error(std::shared_ptr<INode> node);
 
 	std::shared_ptr<INode>	equation();
 	std::shared_ptr<INode>	expression();

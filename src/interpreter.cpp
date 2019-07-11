@@ -43,7 +43,6 @@ std::shared_ptr<INode> Interpreter::visit(std::shared_ptr<INode> node)
         }
 
         case TokenType::POWER:
-        {
             if (left->power == 0 and right->power == 0)
             {
                 auto coef = power(left->coef, right->coef);
@@ -52,14 +51,16 @@ std::shared_ptr<INode> Interpreter::visit(std::shared_ptr<INode> node)
             }
             else if (left->power != 0 and right->power == 0)
             {
-                return std::make_shared<TermNode>(left->coef, right->coef);
+                return std::make_shared<TermNode>(left->coef, left->power * right->coef);
             }
             else
             {
                 // error
             }
             break;
-        }
+        
+        case TokenType::MODULO:
+            break;
 
         case TokenType::EQUAL:
             update_term_map(left, true);
@@ -72,9 +73,27 @@ std::shared_ptr<INode> Interpreter::visit(std::shared_ptr<INode> node)
     return nullptr;
 }
 
+std::shared_ptr<INode> Interpreter::operate(std::shared_ptr<INode> left, std::shared_ptr<INode> right)
+{
+    if (is_type<ErrorNode>(left) || is_type<ErrorNode>(right))
+    {
+        // TODO handle error
+        return std::make_shared<ErrorNode>("error");
+    }
+
+    // if one of them is error return error
+    return nullptr;
+}
+
+std::shared_ptr<INode> Interpreter::plus(std::shared_ptr<INode> left, std::shared_ptr<INode> right)
+{
+    return nullptr;
+}
+
 
 void Interpreter::update_term_map(std::shared_ptr<TermNode> node, bool is_plus)
 {
+    // TODO can it be case that node == nullptr, should I handle error instead of return nothing?
     if (node == nullptr)
         return ;
     
@@ -99,6 +118,7 @@ void Interpreter::print_map()
     for (auto it = term_map.begin(); it != term_map.end(); ++it)
         std::cout << it->first << ": " << it->second << '\n';
 }
+
 void Interpreter::solve()
 {
     if (!is_valid_equation())
@@ -116,12 +136,12 @@ bool Interpreter::is_valid_equation()
 {
     if ((*term_map.rbegin()).first > 2)
     {
-        std::cerr << "highest degree is more than 2";
+        std::cerr << "highest degree is more than 2\n";
         return false;
     }
     if ((*term_map.begin()).first < 0)
     {
-        std::cerr << "lowest degree is less than 0";
+        std::cerr << "lowest degree is less than 0\n";
         return false;
     }
     return true;

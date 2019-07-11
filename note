@@ -19,3 +19,67 @@ bonus
 - handle modulo
 - handle imaginary number result
 - output step
+
+
+
+
+if error
+    return
+
+if expression
+    return
+
+if term
+    should convert to expression ?
+
+if operation
+    do operation on visit left and right
+    return term or expression ?
+
+in theory I should return expression
+but expression is a lot harder to do operation with
+
+I should resolve everything in expression
+
+so there should be no term
+only expression?
+
+op(expression, expression)
+I can do overload but that is quite not beautiful
+is it?
+
+op(type, term left, term right)
+{
+    op(type, )
+
+}
+
+convert if term
+so get the result
+convert it if it's a term
+
+of another way, some op can't use with expression
+some can
+
+
++ - * /
+t+t->t
+t+e->e
+e+e->e 
+e+e->t
+
+%
+t%t->t
+
+^
+t^t->t
+e^t->e
+
+what happen if when doing the operation
+expression change back to term
+like x - x = 0
+x^0 = 0
+
+I can't fix what I can return
+so I have to return as INode
+and create thing with their property

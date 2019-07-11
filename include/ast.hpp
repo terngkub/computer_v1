@@ -1,5 +1,6 @@
 #pragma once
 #include "token.hpp"
+#include <map>
 #include <memory>
 #include <string>
 
@@ -9,6 +10,12 @@ public:
 	~INode() {};
 	virtual void print() {};
 };
+
+template <typename T>
+bool is_type(std::shared_ptr<INode> node)
+{
+	return (std::dynamic_pointer_cast<T>(node) != nullptr) ? true : false;
+}
 
 struct TermNode : public INode
 {
@@ -41,4 +48,11 @@ struct ErrorNode : public INode
 	std::string message;
 
 	ErrorNode(std::string message);
+};
+
+struct ExpressionNode : public INode
+{
+	std::map<int, double> term_map;
+	std::string var_name;
+	void print();
 };
