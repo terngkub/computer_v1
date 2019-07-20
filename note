@@ -83,3 +83,34 @@ x^0 = 0
 I can't fix what I can return
 so I have to return as INode
 and create thing with their property
+
+
+
+The problem now is that
+I use one map to store expression
+so I can't run plus/minus after mul/div
+
+(x + 1) * (x + 1)
+I can't do this thing.
+
+
+The solution is to store expression value in each node instead
+
+The question is
+should I change the parser to get expression node instead of term node
+or should I stay with term node parser and handle the expression in interpreter
+
+I think I should return node with parser
+so that interpreter will do an operation only for expression and expression
+
+the job
+
+1. parser
+- use expression node instead of term node
+- operation node stay the same
+
+2. interpreter
+- plus/minus
+- multiply, divide, modulo
+- power
+- equal

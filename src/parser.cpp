@@ -116,9 +116,12 @@ std::shared_ptr<INode> Parser::power()
 
 		// TODO don't have to check here because we con't know what we will get, should check in interpreter
 		// check combination
+		/*
+		TODO change this ExpressionNode
 		auto right_node = std::dynamic_pointer_cast<TermNode>(right);
 		if (right_node != nullptr && right_node->name != "")
 			return error("degree can't be variable");
+		*/
 
 		node = std::make_shared<OperationNode>(token_type, node, right);
 	}
@@ -131,7 +134,7 @@ std::shared_ptr<INode> Parser::factor()
 	std::shared_ptr<INode> node;
 	if (current_token->type == TokenType::NUMBER)
 	{
-		node = std::make_shared<TermNode>(current_token->num_value);
+		node = std::make_shared<ExpressionNode>(current_token->num_value);
 		current_token = lexer.get_next_token();
 	}
 	else if (current_token->type == TokenType::VARIABLE)
@@ -141,7 +144,7 @@ std::shared_ptr<INode> Parser::factor()
 			var_name = name;
 		else if (var_name != name)
 			return error("too much variable");
-		node = std::make_shared<TermNode>(current_token->str_value);
+		node = std::make_shared<ExpressionNode>(current_token->str_value);
 		current_token = lexer.get_next_token();
 	}
 	else if (current_token->type == TokenType::LPAREN)

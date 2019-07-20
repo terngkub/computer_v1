@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "parser.hpp"
 
-TEST_CASE("", "[parser")
+TEST_CASE("", "parser")
 {
 
 }

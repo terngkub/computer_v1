@@ -16,6 +16,10 @@ class Interpreter
     void solve_polynomial_equation();
     void solve_linear_equation();
 
+    std::shared_ptr<ExpressionNode> plus(std::shared_ptr<ExpressionNode> lhs, std::shared_ptr<ExpressionNode> rhs);
+    std::shared_ptr<ExpressionNode> multiply(std::shared_ptr<ExpressionNode> lhs, std::shared_ptr<ExpressionNode> rhs);
+    std::shared_ptr<INode> power(std::shared_ptr<ExpressionNode> lhs, std::shared_ptr<ExpressionNode> rhs);
+
 public:
     Interpreter(std::shared_ptr<INode>);
     void interpret();

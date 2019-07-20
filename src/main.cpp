@@ -57,6 +57,7 @@ void test_interpreter()
         
     auto interpreter = Interpreter(ast);
     interpreter.interpret();
+    //std::cout << "why segfault\n";
 }
 
 int main()

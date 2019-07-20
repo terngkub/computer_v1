@@ -52,7 +52,12 @@ struct ErrorNode : public INode
 
 struct ExpressionNode : public INode
 {
+	ExpressionNode(double nb);
+	ExpressionNode(std::string var_name);
+
+	void print() const;
+	bool contain_variable() const;
+
 	std::map<int, double> term_map;
 	std::string var_name;
-	void print();
 };
