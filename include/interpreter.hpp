@@ -8,17 +8,8 @@ class Interpreter
 {
     std::shared_ptr<INode> ast;
 
-    std::shared_ptr<INode> visit(std::shared_ptr<INode> node);
-    void update_term_map(std::shared_ptr<TermNode> node, bool is_plus);
-    void print_map();
-    void solve();
-    bool is_valid_equation();
-    void solve_polynomial_equation();
-    void solve_linear_equation();
-
-    std::shared_ptr<ExpressionNode> plus(std::shared_ptr<ExpressionNode> lhs, std::shared_ptr<ExpressionNode> rhs);
-    std::shared_ptr<ExpressionNode> multiply(std::shared_ptr<ExpressionNode> lhs, std::shared_ptr<ExpressionNode> rhs);
-    std::shared_ptr<INode> power(std::shared_ptr<ExpressionNode> lhs, std::shared_ptr<ExpressionNode> rhs);
+    INodePtr visit(INodePtr node);
+    INodePtr operate(OptPtr op_node, ExprPtr left, ExprPtr right);
 
 public:
     Interpreter(std::shared_ptr<INode>);

@@ -32,7 +32,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 TEST_DIR = test
 
 test: $(TEST_DIR)/*.cpp
-	$(CC) $(INC) -o test.out src/token.cpp src/lexer.cpp test/test_lexer.cpp test/test_main.cpp
+	$(CC) $(INC) -o test.out src/token.cpp src/lexer.cpp test/test_lexer.cpp src/ast.cpp test/test_ast.cpp test/test_main.cpp
 	./test.out
 	rm -f test.out
 

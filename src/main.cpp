@@ -37,7 +37,7 @@ void test_parser()
     Lexer lexer(input);
     Parser parser(lexer);
     auto node = parser.parse();
-    node->print();
+    std::cout << node;
 }
 
 void test_interpreter()
@@ -57,7 +57,6 @@ void test_interpreter()
         
     auto interpreter = Interpreter(ast);
     interpreter.interpret();
-    //std::cout << "why segfault\n";
 }
 
 int main()
