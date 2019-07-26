@@ -55,6 +55,17 @@ bool ExprNode::contain_variable() const
 	return false;
 }
 
+void ExprNode::clean_map()
+{
+	for (auto elem : term_map)
+	{
+		if (elem.second == 0)
+			term_map.erase(elem.first);
+	}
+	if (term_map.size() == 0)
+		term_map[0] = 0;
+}
+
 ExprNode operator+(ExprNode const & lhs, ExprNode const & rhs)
 {
 	ExprNode ret(lhs);
@@ -65,6 +76,7 @@ ExprNode operator+(ExprNode const & lhs, ExprNode const & rhs)
 	for (auto elem : rhs.term_map)
 		ret.term_map[elem.first] += elem.second; 
 
+	ret.clean_map();
 	return ret;
 }
 
@@ -78,6 +90,7 @@ ExprNode operator-(ExprNode const & lhs, ExprNode const & rhs)
 	for (auto elem : rhs.term_map)
 		ret.term_map[elem.first] -= elem.second; 
 
+	ret.clean_map();
 	return ret;
 }
 
@@ -95,6 +108,7 @@ ExprNode operator*(ExprNode const & lhs, ExprNode const & rhs)
 			ret.term_map[exponent] += coef;
 		}
 	}
+	ret.clean_map();
 	return ret;
 }
 
@@ -115,6 +129,7 @@ ExprNode operator/(ExprNode const & lhs, ExprNode const & rhs)
 			ret.term_map[exponent] += coef;
 		}
 	}
+	ret.clean_map();
 	return ret;
 }
 
@@ -137,7 +152,7 @@ ExprNode operator^(ExprNode const & lhs, ExprNode const & rhs)
 
 	while (exponent-- > 1)
 		ret = ret * tmp;
-
+	ret.clean_map();
 	return ret;
 }
 
@@ -161,25 +176,33 @@ std::ostream & operator<<(std::ostream & o, ExprNode const & node)
 {
 	for (auto it = node.term_map.rbegin(); it != node.term_map.rend(); ++it)
 	{
+		bool neg = false;
+
 		// plus/minus
 		if (it != node.term_map.rbegin())
 		{
-			if (it->first < 0)
+			if (it->second < 0)
+			{
 				o << " - ";
+				neg = true;
+			}
 			else
 				o << " + ";
 		}
 
 		// coeff
-		o << it->second;
+		auto coef = neg ? -it->second : it->second;
+		if (coef != 1 || it->first == 0)
+			o << coef;
 
 		// variable and power
 		if (it->first != 0)
-		{
-			o << "*" << node.var_name ;
-			if (it->first != 1)
-				o << "^" << it->first;
-		}
+			o << node.var_name;
+		if (it->first > 1)
+			o << "^" << it->first;
+		else if (it->first < 0)
+			o << "^(" << it->first << ")";
+		
 	}
 	return o;
 }

@@ -58,6 +58,7 @@ struct ExprNode : public INode
 	ExprNode(std::string var_name);
 
 	bool contain_variable() const;
+	void clean_map();
 };
 
 ExprNode operator+(ExprNode const & lhs, ExprNode const & rhs);
