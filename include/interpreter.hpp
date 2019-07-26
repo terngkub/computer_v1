@@ -10,6 +10,8 @@ class Interpreter
 
     INodePtr visit(INodePtr node);
     INodePtr operate(OptPtr op_node, ExprPtr left, ExprPtr right);
+    void solve(ExprPtr node);
+    void solve_polynomial(ExprPtr node);
 
 public:
     Interpreter(std::shared_ptr<INode>);

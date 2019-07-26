@@ -56,6 +56,7 @@ void test_interpreter()
     }
         
     auto interpreter = Interpreter(ast);
+    std::cout << "input: " << input << "\n";
     interpreter.interpret();
 }
 

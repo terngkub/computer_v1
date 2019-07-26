@@ -12,16 +12,15 @@ double power(double base, int power)
 
 double sqrt(double number)
 {
-    double x;
-    double new_x;
-
-    x = 0;
+    double x = 0;
     while (x * x <= number)
         x += 0.1;
-    for (auto i = 0; i < 10; ++i)
+
+    double prev_x = x + 1;
+    while (prev_x - x >= 0.000001)
     {
-        new_x = (x + number / x) / 2;
-        x = new_x;
+        prev_x = x;
+        x = (x + number / x) / 2;
     }
-    return new_x;
+    return x;
 }

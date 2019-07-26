@@ -48,12 +48,48 @@ INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 	return std::make_shared<ErrorNode>("undefined operator");
 }
 
+void Interpreter::solve(ExprPtr node)
+{
+	node->clean_map();
+	auto beg = node->term_map.begin();
+	auto end = node->term_map.rbegin();
+
+	if (beg->first < 0)
+		std::cerr << "cannot handle negative exponent\n";
+	else if (end->first == 0)
+		std::cout << "solution: " << *node << "\n";
+	else if (end->first == 1)
+		std::cout << "solution: " << node->var_name << " = " << -node->term_map[0] << "\n";
+	else if (end->first == 2)
+		solve_polynomial(node);
+	else
+		std::cerr << "cannot handle exponent greater than two\n";
+}
+
+void Interpreter::solve_polynomial(ExprPtr node)
+{
+	double a = node->term_map[2];
+    double b = node->term_map.find(1) != node->term_map.end() ? node->term_map[1] : 0;
+    double c = node->term_map.find(0) != node->term_map.end() ? node->term_map[0] : 0;
+    double ret_one = (-b + sqrt(power(b, 2) - 4 * a * c)) / (2 * a);
+    double ret_two = (-b - sqrt(power(b, 2) - 4 * a * c)) / (2 * a);
+	if (ret_one - ret_two < 0.000001)
+		std::cout << "solution: " << node->var_name << " = " << ret_one << '\n';
+	else
+		std::cout << "solution: " << node->var_name << " = " << ret_one << ", " << ret_two << '\n';
+}
+
 void Interpreter::interpret()
 {
 	auto result = visit(ast);
 	if (is_type<ExprNode>(result))
 	{
 		auto result_node = std::dynamic_pointer_cast<ExprNode>(result);
-		std::cout << *result_node << "\n";
+		std::cout << "reduced form: " << *result_node;
+		if (result_node->term_map.size() != 1 || result_node->term_map.begin()->first != 0)
+			std::cout << " = 0";
+		std::cout << "\n";
+
+		solve(result_node);
 	}
 }
