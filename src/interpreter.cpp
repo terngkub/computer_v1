@@ -28,22 +28,29 @@ INodePtr Interpreter::visit(INodePtr node)
 
 INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 {
-	switch (op_node->op)
+	try
 	{
-		case TokenType::PLUS:
-			return std::make_shared<ExprNode>(*left + *right);
-		case TokenType::MINUS:
-			return std::make_shared<ExprNode>(*left - *right);
-		case TokenType::MULTIPLY:
-			return std::make_shared<ExprNode>(*left * *right);
-		case TokenType::DIVIDE:
-			return std::make_shared<ExprNode>(*left / *right);
-		case TokenType::POWER:
-			return std::make_shared<ExprNode>(*left ^ *right);
-		case TokenType::EQUAL:
-			return std::make_shared<ExprNode>(*left - *right);
-		default:
-			return std::make_shared<ErrorNode>("unsupported operator");
+		switch (op_node->op)
+		{
+			case TokenType::PLUS:
+				return std::make_shared<ExprNode>(*left + *right);
+			case TokenType::MINUS:
+				return std::make_shared<ExprNode>(*left - *right);
+			case TokenType::MULTIPLY:
+				return std::make_shared<ExprNode>(*left * *right);
+			case TokenType::DIVIDE:
+				return std::make_shared<ExprNode>(*left / *right);
+			case TokenType::POWER:
+				return std::make_shared<ExprNode>(*left ^ *right);
+			case TokenType::EQUAL:
+				return std::make_shared<ExprNode>(*left - *right);
+			default:
+				return std::make_shared<ErrorNode>("unsupported operator");
+		}
+	}
+	catch(const std::exception& e)
+	{
+		return std::make_shared<ErrorNode>(e.what());
 	}
 	return std::make_shared<ErrorNode>("undefined operator");
 }
@@ -91,5 +98,10 @@ void Interpreter::interpret()
 		std::cout << "\n";
 
 		solve(result_node);
+	}
+	else if (is_type<ErrorNode>(result))
+	{
+		auto error_node = std::dynamic_pointer_cast<ErrorNode>(result);
+		std::cerr << error_node->message << "\n";
 	}
 }
