@@ -88,7 +88,6 @@ std::shared_ptr<INode> Parser::term()
 		current_token = lexer.get_next_token();
 		std::shared_ptr<INode> right = power();
 
-
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
 			return error(err->message);
@@ -131,33 +130,64 @@ std::shared_ptr<INode> Parser::power()
 // NUMBER, VARIABLE
 std::shared_ptr<INode> Parser::factor()
 {
-	std::shared_ptr<INode> node;
 	if (current_token->type == TokenType::NUMBER)
-	{
-		node = std::make_shared<ExprNode>(current_token->num_value);
-		current_token = lexer.get_next_token();
-	}
-	else if (current_token->type == TokenType::VARIABLE)
-	{
-		auto name = current_token->str_value;
-		if (var_name == "")
-			var_name = name;
-		else if (var_name != name)
-			return error("too much variable");
-		node = std::make_shared<ExprNode>(current_token->str_value);
-		current_token = lexer.get_next_token();
-	}
-	else if (current_token->type == TokenType::LPAREN)
+		return get_natural_form();
+
+	if (current_token->type == TokenType::VARIABLE)
+		return get_variable_node();
+
+	if (current_token->type == TokenType::LPAREN)
 	{
 		current_token = lexer.get_next_token();
-		node = expression();
+		auto node = expression();
 
 		if (current_token->type != TokenType::RPAREN)
-			node = error("parenthesis not matching");
-		else
-			current_token = lexer.get_next_token();
+			return error("parenthesis not matching");
+		current_token = lexer.get_next_token();
+
+		return node;
 	}
-	else
-		node = error("invalid type");
+
+	return error("invalid type");
+}
+
+std::shared_ptr<INode> Parser::get_number_node()
+{
+	auto node = std::make_shared<ExprNode>(current_token->num_value);
+	current_token = lexer.get_next_token();
 	return node;
+}
+
+std::shared_ptr<INode> Parser::get_variable_node()
+{
+	auto name = current_token->str_value;
+	if (var_name == "")
+		var_name = name;
+	else if (var_name != name)
+		return error("too much variable");
+	auto node = std::make_shared<ExprNode>(current_token->str_value);
+	current_token = lexer.get_next_token();
+	return node;
+}
+
+INodePtr Parser::get_natural_form()
+{
+	auto coef = get_number_node();
+
+	if (current_token->type != TokenType::VARIABLE)
+		return coef;
+	auto var = get_variable_node();
+
+	if (current_token->type == TokenType::POWER)
+	{
+		current_token = lexer.get_next_token();
+		if (current_token->type != TokenType::NUMBER)
+			return error("");
+
+		auto degree = get_number_node();
+		auto right = std::make_shared<OptNode>(TokenType::POWER, var, degree);
+		return std::make_shared<OptNode>(TokenType::MULTIPLY, coef, right);
+	}
+
+	return std::make_shared<OptNode>(TokenType::MULTIPLY, coef, var);
 }

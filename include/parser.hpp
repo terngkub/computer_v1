@@ -26,4 +26,7 @@ private:
 	std::shared_ptr<INode>	power();
 	std::shared_ptr<INode>	factor();
 
+	std::shared_ptr<INode> get_number_node();
+	std::shared_ptr<INode> get_variable_node();
+	INodePtr get_natural_form();
 };
