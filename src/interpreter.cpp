@@ -64,7 +64,7 @@ void Interpreter::solve(ExprPtr node)
 
 	if (end->first == 0)
 	{
-		std::cout << "solution: " << *node << "\n";
+		std::cout << "solution     : " << *node << "\n";
 		return;
 	}
 
@@ -72,10 +72,10 @@ void Interpreter::solve(ExprPtr node)
 	if (has_neg)
 	{
 		has_divide = true;
-		std::cout << "shifted form: " << *node << " = 0\n";
+		std::cout << "shifted form : " << *node << " = 0\n";
 	}
 	if (has_divide)
-		std::cout << "limitation: x != 0\n";
+		std::cout << "limitation   : x != 0\n";
 
 	std::list<double> solution;
 	if (end->first == 1)
@@ -94,7 +94,7 @@ void Interpreter::solve(ExprPtr node)
 		std::cout << "no solution\n";
 	else
 	{
-		std::cout << "solution: " << node->var_name << " = ";
+		std::cout << "solution     : " << node->var_name << " = ";
 		for (auto it = solution.begin(); it != solution.end(); ++it)
 		{
 			if (it != solution.begin())
@@ -123,7 +123,7 @@ void Interpreter::interpret()
 	if (is_type<ExprNode>(result))
 	{
 		auto result_node = std::dynamic_pointer_cast<ExprNode>(result);
-		std::cout << "reduced form: " << *result_node;
+		std::cout << "reduced form : " << *result_node;
 		if (result_node->term_map.size() != 1 || result_node->term_map.begin()->first != 0)
 			std::cout << " = 0";
 		std::cout << "\n";

@@ -22,6 +22,6 @@ int main(int argc, char** argv)
     }
         
     auto interpreter = Interpreter(ast);
-    std::cout << "input: " << input << "\n";
+    std::cout << "input        : " << input << "\n";
     interpreter.interpret();
 }
