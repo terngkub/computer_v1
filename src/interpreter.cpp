@@ -59,7 +59,7 @@ void Interpreter::solve(ExprPtr node)
 	else if (end->first == 0)
 		std::cout << "solution: " << *node << "\n";
 	else if (end->first == 1)
-		std::cout << "solution: " << node->var_name << " = " << -node->term_map[0] << "\n";
+		std::cout << "solution: " << node->var_name << " = " << -node->term_map[0] / node->term_map[1] << "\n";
 	else if (end->first == 2)
 		solve_polynomial(node);
 	else

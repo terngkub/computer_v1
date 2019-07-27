@@ -114,20 +114,26 @@ ExprNode operator*(ExprNode const & lhs, ExprNode const & rhs)
 
 ExprNode operator/(ExprNode const & lhs, ExprNode const & rhs)
 {
+	// divide by expression
+	if (rhs.term_map.size() != 1)
+		throw std::runtime_error("cannot divide by an expression containing more than one term");
+
+	// divide by zero
+	if (rhs.term_map.find(0) != rhs.term_map.end() && rhs.term_map.at(0) == 0)
+		throw std::runtime_error("divide by zero");
+
+	// divide by one
+	if (rhs.term_map.begin()->second == 0)
+		return lhs;
+
 	ExprNode ret(0);
 	ret.var_name = lhs.var_name != "" ? lhs.var_name : rhs.var_name;
 
-	for (auto elem_l : lhs.term_map)
+	for (auto elem : lhs.term_map)
 	{
-		for (auto elem_r : rhs.term_map)
-		{
-			if (elem_r.second == 0)
-				throw std::runtime_error("operation '/': denominator cannot be zero");
-
-			auto coef = elem_l.second / elem_r.second;
-			auto exponent = elem_l.first - elem_r.first;
-			ret.term_map[exponent] += coef;
-		}
+		auto coef = elem.second / rhs.term_map.begin()->second;
+		auto exponent = elem.first - rhs.term_map.begin()->first;
+		ret.term_map[exponent] = coef;
 	}
 	ret.clean_map();
 	return ret;
