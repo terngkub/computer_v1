@@ -3,7 +3,8 @@
 #include <iostream>
 
 Interpreter::Interpreter(std::shared_ptr<INode> ast) :
-	ast(ast)
+	ast(ast),
+	has_divide(false)
 {}
 
 INodePtr Interpreter::visit(INodePtr node)
@@ -77,44 +78,65 @@ void Interpreter::solve(ExprPtr node)
 	if (has_divide)
 		std::cout << "limitation   : x != 0\n";
 
-	std::list<double> solution;
 	if (end->first == 1)
-		solution.push_back(-node->term_map[0]);
+	{
+		if (has_divide && node->term_map[0] == 0)
+			std::cout << "no solution\n";
+		else
+			std::cout << "solution     : " << node->var_name << " = " << -node->term_map[0] << "\n";
+	}
 	else if (end->first == 2)
-		solve_polynomial(node, solution);
+	{
+		auto solution = solve_polynomial(node);
+		if (has_divide)
+			solution.remove_if([](Complex & c){ return c.rational == 0 && c.imaginary == 0; });
+		if (solution.size() == 0)
+			std::cout << "no solution\n";
+		else
+		{
+			std::cout << "solution     : " << node->var_name << " = ";
+			for (auto it = solution.begin(); it != solution.end(); ++it)
+			{
+				if (it != solution.begin())
+					std::cout << ", ";
+				std::cout << *it;
+			}
+			std::cout << "\n";
+		}
+	}
 	else
 	{
 		std::cerr << "cannot handle exponent greater than two\n";
 		return;
 	}
-
-	if (has_divide)
-		solution.remove(0);
-	if (solution.size() == 0)
-		std::cout << "no solution\n";
-	else
-	{
-		std::cout << "solution     : " << node->var_name << " = ";
-		for (auto it = solution.begin(); it != solution.end(); ++it)
-		{
-			if (it != solution.begin())
-				std::cout << ", ";
-			std::cout << *it;
-		}
-		std::cout << "\n";
-	}
 }
 
-void Interpreter::solve_polynomial(ExprPtr node, std::list<double> & solution)
+std::list<Complex> Interpreter::solve_polynomial(ExprPtr node)
 {
 	double a = node->term_map[2];
     double b = node->term_map.find(1) != node->term_map.end() ? node->term_map[1] : 0;
     double c = node->term_map.find(0) != node->term_map.end() ? node->term_map[0] : 0;
-    double ret_one = (-b + sqrt(power(b, 2) - 4 * a * c)) / (2 * a);
-    double ret_two = (-b - sqrt(power(b, 2) - 4 * a * c)) / (2 * a);
+	double inside = power(b, 2) - (4 * a * c);
+	double denominator = 2 * a;
+	Complex ret_one;
+	Complex ret_two;
+	if (inside < 0)
+	{
+		ret_one.rational = -b / denominator;
+		ret_one.imaginary = sqrt(-inside) / denominator;
+		ret_two.rational = -b / denominator;
+		ret_two.imaginary = -sqrt(-inside) / denominator;
+	}
+	else
+	{
+		ret_one.rational = (-b + sqrt(inside)) / denominator;
+		ret_two.rational = (-b - sqrt(inside)) / denominator;
+	}
+	std::list<Complex> solution;
 	solution.push_back(ret_one);
-	if (ret_one - ret_two >= 0.000001)
+	if (ret_one.rational - ret_two.rational >= 0.000001 || ret_one.imaginary - ret_two.imaginary >= 0.000001)
 		solution.push_back(ret_two);
+	return solution;
 }
 
 void Interpreter::interpret()

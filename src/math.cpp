@@ -12,6 +12,8 @@ double power(double base, int power)
 
 double sqrt(double number)
 {
+    if (number == 0)
+        return 0;
     double x = 0;
     while (x * x <= number)
         x += 0.1;

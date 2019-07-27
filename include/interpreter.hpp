@@ -1,5 +1,6 @@
 #pragma once
 #include "ast.hpp"
+#include "complex.hpp"
 #include <list>
 #include <memory>
 #include <string>
@@ -12,7 +13,7 @@ class Interpreter
     INodePtr visit(INodePtr node);
     INodePtr operate(OptPtr op_node, ExprPtr left, ExprPtr right);
     void solve(ExprPtr node);
-    void solve_polynomial(ExprPtr node, std::list<double> & solution);
+    std::list<Complex> solve_polynomial(ExprPtr node);
 
 public:
     Interpreter(std::shared_ptr<INode>);
