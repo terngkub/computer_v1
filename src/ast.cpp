@@ -66,6 +66,22 @@ void ExprNode::clean_map()
 		term_map[0] = 0;
 }
 
+bool ExprNode::remove_negative_degree()
+{
+	int shift_nb = term_map.begin()->first;
+	if (shift_nb >= 0)
+		return false;
+	if (term_map.size() == 1)
+		shift_nb -= 1;
+
+	auto tmp_map = term_map;
+	term_map.clear();
+	for (auto elem : tmp_map)
+		term_map[elem.first - shift_nb] = elem.second;
+	clean_map();
+	return true;
+}
+
 ExprNode operator+(ExprNode const & lhs, ExprNode const & rhs)
 {
 	ExprNode ret(lhs);
