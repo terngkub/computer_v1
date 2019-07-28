@@ -81,12 +81,6 @@ ExprNode::ExprNode(std::string var_name) :
 	term_map[1] = 1;
 }
 
-ExprNode::ExprNode(double coef, std::string var_name) :
-	var_name(var_name)
-{
-	term_map[1] = coef;
-}
-
 bool ExprNode::contain_variable() const
 {
     if (term_map.size() > 1)

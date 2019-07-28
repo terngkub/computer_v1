@@ -58,7 +58,6 @@ struct ExprNode : public INode
 
 	ExprNode(double nb);
 	ExprNode(std::string var_name);
-	ExprNode(double coef, std::string var_name);
 
 	bool contain_variable() const;
 	void clean_map();

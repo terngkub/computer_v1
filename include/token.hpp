@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory>
 #include <string>
 
 enum	TokenType
@@ -35,3 +36,5 @@ struct Token
 };
 
 std::ostream & operator<<(std::ostream & o, Token const & t);
+
+typedef std::shared_ptr<Token> TokenPtr;

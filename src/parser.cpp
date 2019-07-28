@@ -135,25 +135,33 @@ std::shared_ptr<INode> Parser::power()
 // NUMBER, VARIABLE
 std::shared_ptr<INode> Parser::factor()
 {
-	auto v = Value::POSITIVE;
+	bool neg = false;
 	if (current_token->type == TokenType::MINUS)
 	{
 		get_next_token();
-		if (current_token->type != TokenType::NUMBER && current_token->type != TokenType::VARIABLE)
+		if (current_token->type != TokenType::NUMBER
+				&& current_token->type != TokenType::VARIABLE
+				&& current_token->type != TokenType::LPAREN)
 			return error("invalid minus sign");
-		v = Value::NEGATIVE;
+		neg = true;
 	}
 
-	if (current_token->type == TokenType::NUMBER)
-		return get_natural_form(v);
+	INodePtr node;
 
-	if (current_token->type == TokenType::VARIABLE)
-		return get_variable_node(v);
+	if (current_token->type == TokenType::NUMBER
+			|| current_token->type == TokenType::LPAREN)
+		node = natural_form();
+	else if (current_token->type == TokenType::VARIABLE)
+		node = variable();
+	else
+		return error("invalid type");
 
-	if (current_token->type == TokenType::LPAREN)
-		return parenthesis();
-
-	return error("invalid type");
+	if (neg)
+	{
+		auto neg_node = std::make_shared<ExprNode>(-1);
+		return std::make_shared<OptNode>(TokenType::MULTIPLY, neg_node, node);
+	}
+	return node;
 }
 
 INodePtr Parser::parenthesis()
@@ -168,40 +176,36 @@ INodePtr Parser::parenthesis()
 	return node;
 }
 
-std::shared_ptr<INode> Parser::get_number_node(enum Value v)
+INodePtr Parser::number()
 {
-	ExprPtr node;
-	if (v == NEGATIVE)
-		node = std::make_shared<ExprNode>(-current_token->num_value);
-	else
-		node = std::make_shared<ExprNode>(current_token->num_value);
+	auto node = std::make_shared<ExprNode>(current_token->num_value);
 	get_next_token();
 	return node;
 }
 
-std::shared_ptr<INode> Parser::get_variable_node(enum Value v)
+INodePtr Parser::variable()
 {
 	auto name = current_token->str_value;
 	if (var_name == "")
 		var_name = name;
 	else if (var_name != name)
 		return error("too much variable");
-	ExprPtr node;
-	if (v == NEGATIVE)
-		node = std::make_shared<ExprNode>(-1, current_token->str_value);
-	else
-		node = std::make_shared<ExprNode>(current_token->str_value);
+	auto node = std::make_shared<ExprNode>(current_token->str_value);
 	get_next_token();
 	return node;
 }
 
-INodePtr Parser::get_natural_form(enum Value v)
+INodePtr Parser::natural_form()
 {
-	auto coef = get_number_node(v);
+	INodePtr coef;
+	if (current_token->type == TokenType::NUMBER)
+		coef = number();
+	else if (current_token->type == TokenType::LPAREN)
+		coef = parenthesis();
 
 	if (current_token->type != TokenType::VARIABLE)
 		return coef;
-	auto var = get_variable_node(Value::POSITIVE);
+	auto var = variable();
 
 	if (current_token->type == TokenType::POWER)
 	{
