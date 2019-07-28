@@ -67,7 +67,7 @@ void Interpreter::solve(ExprPtr node)
 	node->clean_map();
 	auto end = node->term_map.rbegin();
 
-	if (end->first == 0)
+	if (node->term_map.size() == 1 && end->first == 0)
 	{
 		std::cout << "solution     : " << *node << "\n";
 		return;
