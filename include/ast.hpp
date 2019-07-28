@@ -60,6 +60,7 @@ struct ExprNode : public INode
 	bool contain_variable() const;
 	void clean_map();
 	bool remove_negative_degree();
+	bool remove_excess_degree();
 };
 
 ExprNode operator+(ExprNode const & lhs, ExprNode const & rhs);

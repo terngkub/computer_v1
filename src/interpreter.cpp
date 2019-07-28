@@ -69,12 +69,15 @@ void Interpreter::solve(ExprPtr node)
 		return;
 	}
 
+	bool has_excess = node->remove_excess_degree();
 	bool has_neg = node->remove_negative_degree();
 	if (has_neg)
 	{
 		has_divide = true;
 		std::cout << "shifted form : " << *node << " = 0\n";
 	}
+	else if (has_excess)
+		std::cout << "shifted form : (" << node->var_name << ")(" << *node << ") = 0\n";
 	if (has_divide)
 		std::cout << "limitation   : x != 0\n";
 
@@ -82,12 +85,18 @@ void Interpreter::solve(ExprPtr node)
 	{
 		if (has_divide && node->term_map[0] == 0)
 			std::cout << "no solution\n";
+		else if (node->term_map[0] == 0)
+			std::cout << "solution     : " << node->var_name << " = 0\n";
+		else if (has_excess && !has_divide)
+			std::cout << "solution     : " << node->var_name << " = 0, " << -node->term_map[0] << "\n";
 		else
 			std::cout << "solution     : " << node->var_name << " = " << -node->term_map[0] << "\n";
 	}
 	else if (end->first == 2)
 	{
 		auto solution = solve_polynomial(node);
+		if (has_excess)
+			solution.push_back(Complex(0, 0));
 		if (has_divide)
 			solution.remove_if([](Complex & c){ return c.rational == 0 && c.imaginary == 0; });
 		if (solution.size() == 0)
