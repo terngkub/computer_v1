@@ -78,10 +78,15 @@ void Interpreter::solve(ExprPtr node)
 	if (has_neg)
 	{
 		has_divide = true;
-		std::cout << "shifted form : " << *node << " = 0\n";
+		std::cout << "cleaned form : " << *node << " = 0\n";
 	}
 	else if (has_excess)
-		std::cout << "shifted form : (" << node->var_name << ")(" << *node << ") = 0\n";
+	{
+		if (node->term_map.size() == 1)
+			std::cout << "reduce degree: " << *node << " = 0\n";
+		else
+			std::cout << "reduce degree: (" << node->var_name << ")(" << *node << ") = 0\n";
+	}
 	if (has_divide)
 		std::cout << "limitation   : x != 0\n";
 

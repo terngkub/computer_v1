@@ -128,7 +128,7 @@ bool ExprNode::remove_negative_degree()
 bool ExprNode::remove_excess_degree()
 {
 	int shift_nb = term_map.begin()->first;
-	if (shift_nb < 1)
+	if (shift_nb < 1 || (shift_nb == 1 && term_map.size() == 1))
 		return false;
 	if (term_map.size() == 1)
 		shift_nb -= 1;
