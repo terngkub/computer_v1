@@ -151,18 +151,21 @@ std::shared_ptr<INode> Parser::factor()
 		return get_variable_node(v);
 
 	if (current_token->type == TokenType::LPAREN)
-	{
-		get_next_token();
-		auto node = expression();
-
-		if (current_token->type != TokenType::RPAREN)
-			return error("parenthesis not matching");
-		get_next_token();
-
-		return node;
-	}
+		return parenthesis();
 
 	return error("invalid type");
+}
+
+INodePtr Parser::parenthesis()
+{
+	get_next_token();
+	auto node = expression();
+
+	if (current_token->type != TokenType::RPAREN)
+		return error("parenthesis not matching");
+	get_next_token();
+
+	return node;
 }
 
 std::shared_ptr<INode> Parser::get_number_node(enum Value v)
@@ -194,9 +197,7 @@ std::shared_ptr<INode> Parser::get_variable_node(enum Value v)
 
 INodePtr Parser::get_natural_form(enum Value v)
 {
-	// this will alway be number so ok
 	auto coef = get_number_node(v);
-	// the problem is it doesn't handle left parenthesis
 
 	if (current_token->type != TokenType::VARIABLE)
 		return coef;
@@ -205,10 +206,7 @@ INodePtr Parser::get_natural_form(enum Value v)
 	if (current_token->type == TokenType::POWER)
 	{
 		get_next_token();
-		if (current_token->type != TokenType::NUMBER)
-			return error("");
-
-		auto degree = get_number_node(Value::POSITIVE);
+		auto degree = factor();
 		auto right = std::make_shared<OptNode>(TokenType::POWER, var, degree);
 		return std::make_shared<OptNode>(TokenType::MULTIPLY, coef, right);
 	}

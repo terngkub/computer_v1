@@ -33,6 +33,7 @@ private:
 	std::shared_ptr<INode>	term();
 	std::shared_ptr<INode>	power();
 	std::shared_ptr<INode>	factor();
+	INodePtr parenthesis();
 
 	std::shared_ptr<INode> get_number_node(enum Value v);
 	std::shared_ptr<INode> get_variable_node(enum Value v);
