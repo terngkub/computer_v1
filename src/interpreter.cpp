@@ -46,6 +46,10 @@ INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 			case TokenType::POWER:
 				return std::make_shared<ExprNode>(*left ^ *right);
 			case TokenType::EQUAL:
+				// if left and right don't have variable -> error
+				if (left->term_map.size() == 1 && left->term_map.begin()->first == 0
+						&& right->term_map.size() == 1 && right->term_map.begin()->first == 0)
+					return std::make_shared<ErrorNode>("invalid input: equal sign with no variable");
 				return std::make_shared<ExprNode>(*left - *right);
 			default:
 				return std::make_shared<ErrorNode>("unsupported operator");
