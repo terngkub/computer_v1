@@ -10,6 +10,7 @@ int main(int argc, char** argv)
         return 1;
     }
     std::string input(argv[1]);
+    std::cout << "input        : " << input << "\n";
 
     Lexer lexer(input);
     Parser parser(lexer);
@@ -20,8 +21,8 @@ int main(int argc, char** argv)
         std::cerr << err->message << '\n';
         return 1;
     }
-        
+    std::cout << "parsed form  : " << ast << "\n";
+
     auto interpreter = Interpreter(ast);
-    std::cout << "input        : " << input << "\n";
     interpreter.interpret();
 }

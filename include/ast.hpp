@@ -17,6 +17,8 @@ bool is_type(std::shared_ptr<INode> node)
 	return (std::dynamic_pointer_cast<T>(node) != nullptr) ? true : false;
 }
 
+std::ostream & operator<<(std::ostream & o, std::shared_ptr<INode> node);
+
 
 
 // ErrorNode

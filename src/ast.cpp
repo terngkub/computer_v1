@@ -1,5 +1,30 @@
 #include "ast.hpp"
 
+// INode
+std::ostream & operator<<(std::ostream & o, std::shared_ptr<INode> node)
+{
+    auto err_node = std::dynamic_pointer_cast<ErrorNode>(node);
+    if (err_node)
+	{
+        o << *err_node;
+		return o;
+	}
+    auto opt_node = std::dynamic_pointer_cast<OptNode>(node);
+    if (opt_node)
+	{
+        o << *opt_node;
+		return o;
+	}
+    auto expr_node = std::dynamic_pointer_cast<ExprNode>(node);
+    if (expr_node)
+	{
+        o << *expr_node;
+		return o;
+	}
+	return o;
+}
+
+
 // ErrorNode
 
 ErrorNode::ErrorNode(std::string message) :
@@ -24,7 +49,19 @@ OptNode::OptNode(enum TokenType op, std::shared_ptr<INode> left, std::shared_ptr
 
 std::ostream & operator<<(std::ostream & o, OptNode const & node)
 {
-	o << node.op;
+	o << "(" << node.left;
+	switch(node.op)
+	{
+		case TokenType::PLUS:		o << " + "; break;
+		case TokenType::MINUS:		o << " - "; break;
+		case TokenType::MULTIPLY:	o << " * "; break;
+		case TokenType::DIVIDE:		o << " / "; break;
+		case TokenType::MODULO:		o << " % "; break;
+		case TokenType::POWER:		o << "^"; break;
+		case TokenType::EQUAL:		o << " = "; break;
+		default: break;
+	}
+	o << node.right << ")";
 	return o;
 }
 
