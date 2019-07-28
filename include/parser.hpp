@@ -4,6 +4,11 @@
 #include "token.hpp"
 #include <memory>
 
+enum Value
+{
+	POSITIVE,
+	NEGATIVE
+};
 
 struct Parser
 {
@@ -14,10 +19,13 @@ private:
 	typedef std::shared_ptr<INode> (Parser::*ParserFunc)();
 
 	Lexer &					lexer;
+	std::shared_ptr<Token>	prev_token;
 	std::shared_ptr<Token>	current_token;
 	std::string				var_name;
 	bool					has_equal;
 
+	void 					get_next_token();
+	bool 					is_minus();
 	std::shared_ptr<INode>	error(std::string error_message);
 
 	std::shared_ptr<INode>	equation();
@@ -26,7 +34,7 @@ private:
 	std::shared_ptr<INode>	power();
 	std::shared_ptr<INode>	factor();
 
-	std::shared_ptr<INode> get_number_node();
-	std::shared_ptr<INode> get_variable_node();
-	INodePtr get_natural_form();
+	std::shared_ptr<INode> get_number_node(enum Value v);
+	std::shared_ptr<INode> get_variable_node(enum Value v);
+	INodePtr get_natural_form(enum Value v);
 };
