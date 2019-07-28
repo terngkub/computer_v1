@@ -158,6 +158,12 @@ void Interpreter::interpret()
 	if (is_type<ExprNode>(result))
 	{
 		auto result_node = std::dynamic_pointer_cast<ExprNode>(result);
+
+		// handle negative coefficient on highest degree
+		auto end = result_node->term_map.rbegin();
+		if (end->first != 0 && end->second < 0)
+			result_node = std::make_shared<ExprNode>(*result_node * ExprNode(-1));
+
 		std::cout << "reduced form : " << *result_node;
 		if (result_node->term_map.size() != 1 || result_node->term_map.begin()->first != 0)
 			std::cout << " = 0";
