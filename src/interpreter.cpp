@@ -119,7 +119,7 @@ void Interpreter::solve(ExprPtr node)
 	}
 	else
 	{
-		std::cerr << "cannot handle exponent greater than two\n";
+		std::cerr << "cannot handle degree greater than two\n";
 		return;
 	}
 }

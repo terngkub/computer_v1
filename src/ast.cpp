@@ -172,9 +172,9 @@ ExprNode operator*(ExprNode const & lhs, ExprNode const & rhs)
 	{
 		for (auto elem_r : rhs.term_map)
 		{
-			auto exponent = elem_l.first + elem_r.first;
+			auto degree = elem_l.first + elem_r.first;
 			auto coef = elem_l.second * elem_r.second;
-			ret.term_map[exponent] += coef;
+			ret.term_map[degree] += coef;
 		}
 	}
 	ret.clean_map();
@@ -201,8 +201,8 @@ ExprNode operator/(ExprNode const & lhs, ExprNode const & rhs)
 	for (auto elem : lhs.term_map)
 	{
 		auto coef = elem.second / rhs.term_map.begin()->second;
-		auto exponent = elem.first - rhs.term_map.begin()->first;
-		ret.term_map[exponent] = coef;
+		auto degree = elem.first - rhs.term_map.begin()->first;
+		ret.term_map[degree] = coef;
 	}
 	ret.clean_map();
 	return ret;
@@ -211,21 +211,21 @@ ExprNode operator/(ExprNode const & lhs, ExprNode const & rhs)
 ExprNode operator^(ExprNode const & lhs, ExprNode const & rhs)
 {
 	if (rhs.contain_variable())
-		throw std::runtime_error("operation '^': exponent cannot container variable(s)");
+		throw std::runtime_error("operation '^': degree cannot container variable(s)");
 
-	auto exponent = rhs.term_map.at(0);
+	auto degree = rhs.term_map.at(0);
 
-	if (exponent < 0)
-		throw std::runtime_error("operation '^': exponent cannot be negative number");
-	if (exponent == 0)
+	if (degree < 0)
+		throw std::runtime_error("operation '^': degree cannot be negative number");
+	if (degree == 0)
 		return ExprNode(1);
-	if (exponent ==  1)
+	if (degree ==  1)
 		return lhs;
 
 	auto ret = ExprNode(lhs);
 	auto tmp = ExprNode(lhs);
 
-	while (exponent-- > 1)
+	while (degree-- > 1)
 		ret = ret * tmp;
 	ret.clean_map();
 	return ret;

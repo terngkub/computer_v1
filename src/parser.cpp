@@ -112,16 +112,6 @@ std::shared_ptr<INode> Parser::power()
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
 			return error(err->message);
-
-		// TODO don't have to check here because we con't know what we will get, should check in interpreter
-		// check combination
-		/*
-		TODO change this ExprNode
-		auto right_node = std::dynamic_pointer_cast<TermNode>(right);
-		if (right_node != nullptr && right_node->name != "")
-			return error("degree can't be variable");
-		*/
-
 		node = std::make_shared<OptNode>(token_type, node, right);
 	}
 	return node;
