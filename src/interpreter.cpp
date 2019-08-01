@@ -97,9 +97,9 @@ void Interpreter::solve(ExprPtr node)
 		else if (node->term_map[0] == 0)
 			std::cout << "solution     : " << node->var_name << " = 0\n";
 		else if (has_excess && !has_divide)
-			std::cout << "solution     : " << node->var_name << " = 0, " << -node->term_map[0] << "\n";
+			std::cout << "solution     : " << node->var_name << " = 0, " << -node->term_map[0] / node->term_map[1] << "\n";
 		else
-			std::cout << "solution     : " << node->var_name << " = " << -node->term_map[0] << "\n";
+			std::cout << "solution     : " << node->var_name << " = " << -node->term_map[0] / node->term_map[1] << "\n";
 	}
 	else if (end->first == 2)
 	{
