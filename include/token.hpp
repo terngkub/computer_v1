@@ -33,6 +33,8 @@ struct Token
 	enum TokenType	type;
 	double			num_value;
 	std::string		str_value;
+
+	std::string str() const;
 };
 
 std::ostream & operator<<(std::ostream & o, Token const & t);

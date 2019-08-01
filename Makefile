@@ -58,7 +58,9 @@ bin_re: bin_fclean $(NAME)
 
 TEST_NAME = computor_test
 
-TEST_FILE = test_main.cpp test_lexer.cpp
+TEST_FILE = test_main.cpp \
+			test_lexer.cpp \
+			test_ast.cpp
 
 TEST_DIR = test
 TEST = $(addprefix $(TEST_DIR)/,$(TEST_FILE))

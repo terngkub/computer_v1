@@ -1,4 +1,5 @@
 #include "token.hpp"
+#include <sstream>
 
 std::ostream & operator<<(std::ostream & o, TokenType const & t)
 {
@@ -54,12 +55,20 @@ Token::Token(TokenType type, std::string str_value) :
 	str_value(str_value)
 {}
 
+std::string Token::str() const
+{
+	std::ostringstream o;
+	o << type << "(";
+	if (type == TokenType::NUMBER)
+		o << num_value;
+	else
+		o << str_value;
+	o << ")";
+	return o.str();
+}
+
 std::ostream & operator<<(std::ostream & o, Token const & token)
 {
-	o << token.type;
-	if (token.type == TokenType::NUMBER)
-		o << token.num_value;
-	else
-		o << token.str_value;
+	o << token.str();
 	return o;
 }

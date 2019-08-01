@@ -1,47 +1,37 @@
 #include "catch.hpp"
 #include "lexer.hpp"
 
-TEST_CASE("lexer simple", "[lexer]")
+TEST_CASE("lexer", "[lexer]")
 {
     SECTION("integer")
     {
         auto lexer = Lexer("42");
         auto token = lexer.get_next_token();
-        REQUIRE(token->num_value == 42.0);
-        REQUIRE(token->str_value == "");
-        REQUIRE(token->type == TokenType::NUMBER);
+        REQUIRE(token->str() == "NUMBER(42)");
     }
     SECTION("double")
     {
         auto lexer = Lexer("3.14");
         auto token = lexer.get_next_token();
-        REQUIRE(token->num_value == 3.14);
-        REQUIRE(token->str_value == "");
-        REQUIRE(token->type == TokenType::NUMBER);
+        REQUIRE(token->str() == "NUMBER(3.14)");
     }
     SECTION("variable")
     {
         auto lexer = Lexer("abc");
         auto token = lexer.get_next_token();
-        REQUIRE(token->num_value == 0);
-        REQUIRE(token->str_value == "abc");
-        REQUIRE(token->type == TokenType::VARIABLE);
+        REQUIRE(token->str() == "VARIABLE(abc)");
     }
     SECTION("plus")
     {
         auto lexer = Lexer("+");
         auto token = lexer.get_next_token();
-        REQUIRE(token->num_value == 0);
-        REQUIRE(token->str_value == "+");
-        REQUIRE(token->type == TokenType::PLUS);
+        REQUIRE(token->str() == "PLUS(+)");
     }
     SECTION("minus")
     {
         auto lexer = Lexer("-");
         auto token = lexer.get_next_token();
-        REQUIRE(token->num_value == 0);
-        REQUIRE(token->str_value == "-");
-        REQUIRE(token->type == TokenType::MINUS);
+        REQUIRE(token->str() == "MINUS(-)");
     }
     SECTION("multiply")
     {

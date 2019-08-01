@@ -22,6 +22,7 @@ void Parser::get_next_token()
 {
 	prev_token = current_token;
 	current_token = lexer.get_next_token();
+	std::cout << "token: " << current_token->str() << "\n";
 }
 
 bool Parser::is_minus()
