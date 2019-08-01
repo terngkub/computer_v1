@@ -46,11 +46,15 @@ INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 			case TokenType::POWER:
 				return std::make_shared<ExprNode>(*left ^ *right);
 			case TokenType::EQUAL:
-				// if left and right don't have variable -> error
-				if (left->term_map.size() == 1 && left->term_map.begin()->first == 0
-						&& right->term_map.size() == 1 && right->term_map.begin()->first == 0)
-					return std::make_shared<ErrorNode>("invalid input: equal sign with no variable");
-				return std::make_shared<ExprNode>(*left - *right);
+			{
+				auto ret = std::make_shared<ExprNode>(*left - *right);
+				if (ret->term_map.end()->first == 0)
+				{
+					std::cout << "reduced form : " << *ret << " = 0\n";
+					return std::make_shared<ErrorNode>("reduced form don't have variable");
+				}
+				return ret;
+			}
 			default:
 				return std::make_shared<ErrorNode>("unsupported operator");
 		}
@@ -89,6 +93,11 @@ void Interpreter::solve(ExprPtr node)
 	}
 	if (has_divide)
 		std::cout << "limitation   : x != 0\n";
+
+	if (has_excess)
+		std::cout << "degree       : " << end->first + 1 << "\n";
+	else
+		std::cout << "degree       : " << end->first << "\n";
 
 	if (end->first == 1)
 	{

@@ -30,6 +30,10 @@ std::ostream & operator<<(std::ostream & o, Complex const & c)
         else
             o << " + " << c.imaginary << "i";
     }
+    else if (c.imaginary == 1)
+        o << "i";
+    else if (c.imaginary == -1)
+        o << "-i";
     else
         o << c.imaginary << "i";
     return o;
