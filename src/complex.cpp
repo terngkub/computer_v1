@@ -21,7 +21,11 @@ std::ostream & operator<<(std::ostream & o, Complex const & c)
     if (c.rational != 0)
     {
         o << c.rational;
-        if (c.imaginary < 0)
+        if (c.imaginary == -1)
+            o << " - i";
+        else if (c.imaginary == 1)
+            o << " + i";
+        else if (c.imaginary < 0)
             o << " - " << -c.imaginary << "i";
         else
             o << " + " << c.imaginary << "i";
