@@ -1,4 +1,5 @@
 CC = g++
+DEBUG = -fsanitize=address
 CFLAGS = -Wall -Wextra -Werror -std=c++11 -g3
 
 NAME = computor

@@ -94,10 +94,12 @@ bool ExprNode::contain_variable() const
 
 void ExprNode::clean_map()
 {
-	for (auto elem : term_map)
+	for (auto it = term_map.begin(); it != term_map.end(); )
 	{
-		if (elem.second == 0)
-			term_map.erase(elem.first);
+		if (it->second == 0)
+			it = term_map.erase(it);
+		else
+			++it;
 	}
 	if (term_map.size() == 0)
 		term_map[0] = 0;
