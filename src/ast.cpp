@@ -269,7 +269,9 @@ std::ostream & operator<<(std::ostream & o, ExprNode const & node)
 
 		// coeff
 		auto coef = neg ? -it->second : it->second;
-		if (coef != 1 || it->first == 0)
+		if (coef == -1 && it->first != 0)
+			o << "-";
+		else if (coef != 1 || it->first == 0)
 			o << coef;
 
 		// variable and power
