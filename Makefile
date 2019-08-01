@@ -1,10 +1,23 @@
 CC = g++
-DEBUG = -fsanitize=address
-CFLAGS = -Wall -Wextra -Werror -std=c++11 -g3
+CPP_VERSION = -std=c++11
+CFLAGS = -Wall -Wextra -Werror $(CPP_VERSION) -g3
 
-NAME = computor
-FILE =	main.cpp \
-		complex.cpp \
+# All
+
+all: bin test
+
+clean: bin_clean test_clean
+
+fclean: bin_fclean test_fclean
+
+re: fclean all
+
+
+# Program
+
+NAME =	computor
+MAIN =	main.cpp
+FILE =	complex.cpp \
 		math.cpp \
 		token.cpp \
 		lexer.cpp \
@@ -12,15 +25,16 @@ FILE =	main.cpp \
 		parser.cpp \
 		interpreter.cpp
 
+SRC_FILE = $(MAIN) $(FILE)
 SRC_DIR = src
-SRC = $(addprefix $(SRC_DIR)/,$(FILE))
+SRC = $(addprefix $(SRC_DIR)/,$(SRC_FILE))
 
 INC = -I include
 
 OBJ_DIR = obj
-OBJ = $(addprefix $(OBJ_DIR)/,$(FILE:%.cpp=%.o))
+OBJ = $(addprefix $(OBJ_DIR)/,$(SRC_FILE:%.cpp=%.o))
 
-all: $(NAME)
+bin: $(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $(NAME) $(OBJ)
@@ -31,21 +45,47 @@ $(OBJ_DIR):
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
-TEST_DIR = test
-
-test: test.out
-	./test.out lexer
-	rm -f test.out
-
-test.out: $(TEST_DIR)/*.cpp
-	$(CC) $(CFLAGS) $(INC) -o test.out src/token.cpp src/lexer.cpp test/test_lexer.cpp
-
-clean:
+bin_clean:
 	rm -rf $(OBJ_DIR)
 
-fclean: clean
+bin_fclean: bin_clean
 	rm -f $(NAME)
 
-re: fclean all
+bin_re: bin_fclean $(NAME)
 
-.PHONY: all clean fclean re
+
+# Test
+
+TEST_NAME = computor_test
+
+TEST_FILE = test_main.cpp test_lexer.cpp
+
+TEST_DIR = test
+TEST = $(addprefix $(TEST_DIR)/,$(TEST_FILE))
+
+TEST_OBJ_DIR = obj_test
+TEST_OBJ = $(addprefix $(TEST_OBJ_DIR)/,$(TEST_FILE:%.cpp=%.o))
+
+DEP = $(addprefix $(OBJ_DIR)/,$(FILE:%.cpp=%.o))
+
+test: $(TEST_NAME)
+
+$(TEST_NAME):  $(OBJ_DIR) $(DEP) $(TEST_OBJ_DIR) $(TEST_OBJ)
+	$(CC) $(CFLAGS) $(INC) -o $(TEST_NAME) $(DEP) $(TEST_OBJ)
+
+$(TEST_OBJ_DIR):
+	mkdir -p $(TEST_OBJ_DIR)
+
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+test_clean:
+	rm -rf $(DEP) $(TEST_OBJ_DIR)
+
+test_fclean: test_clean
+	rm -f $(TEST_NAME)
+
+test_re: test_fclean $(TEST_NAME)
+
+
+.PHONY: all clean re fclean bin_clean bin_fclean test_clean test_fclean
