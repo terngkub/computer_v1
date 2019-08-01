@@ -48,7 +48,7 @@ INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 			case TokenType::EQUAL:
 			{
 				auto ret = std::make_shared<ExprNode>(*left - *right);
-				if (ret->term_map.end()->first == 0)
+				if (ret->term_map.rbegin()->first == 0)
 				{
 					std::cout << "reduced form : " << *ret << " = 0\n";
 					return std::make_shared<ErrorNode>("reduced form don't have variable");

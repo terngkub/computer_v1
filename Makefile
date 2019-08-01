@@ -33,10 +33,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 TEST_DIR = test
 
-test: $(TEST_DIR)/*.cpp
-	$(CC) $(INC) -o test.out src/token.cpp src/lexer.cpp test/test_lexer.cpp src/ast.cpp test/test_ast.cpp test/test_main.cpp
-	./test.out
+test: test.out
+	./test.out lexer
 	rm -f test.out
+
+test.out: $(TEST_DIR)/*.cpp
+	$(CC) $(CFLAGS) $(INC) -o test.out src/token.cpp src/lexer.cpp test/test_lexer.cpp
 
 clean:
 	rm -rf $(OBJ_DIR)
