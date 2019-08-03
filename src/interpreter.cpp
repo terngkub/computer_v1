@@ -62,51 +62,39 @@ INodePtr Interpreter::equal(ExprPtr left, ExprPtr right)
 {
 	auto ret = std::make_shared<ExprNode>(*left - *right);
 	if (ret->term_map.rbegin()->first == 0)
-	{
-		std::cout << "reduced form : " << *ret << " = 0\n";
 		return std::make_shared<ErrorNode>("reduced form don't have variable");
-	}
 	return ret;
+}
+
+void Interpreter::clean_result()
+{
+	result->clean_map();
+
+	// handle negative coefficient (-x + 1 => x - 1)
+	auto end = result->term_map.rbegin();
+	if (end->first != 0 && end->second < 0)
+		result = std::make_shared<ExprNode>(*result * ExprNode(-1));
+
+	// handle excess degree (x^3 + x^2 => (x)(x+1))
+	has_excess_degree = result->remove_excess_degree();
+
+	// handle negative degree (x^-2 + x^-1 => x + 1 && x != 0)
+	has_negative_degree = result->remove_negative_degree();
+	if (has_negative_degree)
+		has_divide = true;
 }
 
 void Interpreter::solve()
 {
-	result->clean_map();
 	auto end = result->term_map.rbegin();
 
 	if (result->term_map.size() == 1 && end->first == 0)
-	{
 		solution.push_back(Complex(result->term_map[0], 0));
-		return;
-	}
-
-	// handle excess and negative degree
-	has_excess = result->remove_excess_degree();
-	has_neg = result->remove_negative_degree();
-	if (has_neg)
-	{
-		has_divide = true;
-		std::cout << "cleaned form : " << *result << " = 0\n";
-	}
-	else if (has_excess)
-	{
-		if (result->term_map.size() == 1)
-			std::cout << "reduce degree: " << *result << " = 0\n";
-		else
-			std::cout << "reduce degree: (" << result->var_name << ")(" << *result << ") = 0\n";
-	}
-
-	if (end->first == 1)
+	else if (end->first == 1)
 		solve_one_degree();
 	else if (end->first == 2)
 		solve_two_degree();
-	else
-	{
-		std::cerr << "cannot handle degree greater than two\n";
-		return;
-	}
 }
-
 
 void Interpreter::solve_one_degree()
 {
@@ -114,7 +102,7 @@ void Interpreter::solve_one_degree()
 		return;
 	else if (result->term_map[0] == 0)
 		solution.push_back(Complex(0, 0));
-	else if (has_excess && !has_divide)
+	else if (has_excess_degree && !has_divide)
 	{
 		solution.push_back(Complex(0, 0));
 		solution.push_back(Complex(-result->term_map[0] / result->term_map[1], 0));
@@ -126,7 +114,7 @@ void Interpreter::solve_one_degree()
 void Interpreter::solve_two_degree()
 {
 	get_two_degree_solution();
-	if (has_excess)
+	if (has_excess_degree)
 		solution.push_back(Complex(0, 0));
 	if (has_divide)
 		solution.remove_if([](Complex & c){ return c.rational == 0 && c.imaginary == 0; });
@@ -159,21 +147,44 @@ void Interpreter::get_two_degree_solution()
 		solution.push_back(ret_two);
 }
 
+void Interpreter::print()
+{
+	print_reduced_form();
+	print_degree();
+	print_solution();
+}
+
+void Interpreter::print_reduced_form()
+{
+	if (has_excess_degree && result->term_map.size() != 1)
+		std::cout << "reduce form : (" << result->var_name << ")(" << *result << ") = 0\n";
+	else
+	{
+		std::cout << "reduced form : " << *result;
+		if (result->term_map.size() != 1 || result->term_map.begin()->first != 0)
+			std::cout << " = 0";
+		std::cout << "\n";
+	}
+}
+
 void Interpreter::print_degree()
 {
 	auto end = result->term_map.rbegin();
-	if (has_excess)
-		std::cout << "degree       : " << end->first + 1 << "\n";
-	else
-		std::cout << "degree       : " << end->first << "\n";
+	auto degree = has_excess_degree ? end->first + 1 : end->first;
+	std::cout << "degree       : " << degree << "\n";
 }
 
 void Interpreter::print_solution()
 {
 	if (has_divide)
 		std::cout << "limitation   : x != 0\n";
-	if (solution.size() == 0)
+
+	if (result->term_map.rbegin()->first > 2)
+		std::cerr << "cannot handle degree greater than two\n";
+	else if (solution.size() == 0)
 		std::cout << "no solution\n";
+	else if (result->term_map.size() == 1 && result->term_map.rbegin()->first == 0)
+		std::cout << "solution     : " << *result << "\n";
 	else
 	{
 		std::cout << "solution     : " << result->var_name << " = ";
@@ -187,27 +198,15 @@ void Interpreter::print_solution()
 	}
 }
 
-
 void Interpreter::interpret()
 {
 	auto result_inode = visit(ast);
 	if (is_type<ExprNode>(result_inode))
 	{
 		result = std::make_shared<ExprNode>(*std::dynamic_pointer_cast<ExprNode>(result_inode));
-
-		// handle negative coefficient on highest degree
-		auto end = result->term_map.rbegin();
-		if (end->first != 0 && end->second < 0)
-			result = std::make_shared<ExprNode>(*result * ExprNode(-1));
-
-		std::cout << "reduced form : " << *result;
-		if (result->term_map.size() != 1 || result->term_map.begin()->first != 0)
-			std::cout << " = 0";
-		std::cout << "\n";
-
+		clean_result();
 		solve();
-		print_degree();
-		print_solution();
+		print();
 	}
 	else if (is_type<ErrorNode>(result_inode))
 	{
