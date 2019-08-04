@@ -62,7 +62,7 @@ INodePtr Interpreter::equal(ExprPtr left, ExprPtr right)
 {
 	auto ret = std::make_shared<ExprNode>(*left - *right);
 	if (ret->term_map.rbegin()->first == 0)
-		return std::make_shared<ErrorNode>("reduced form don't have variable");
+		return std::make_shared<ErrorNode>("need variable in equation");
 	return ret;
 }
 
@@ -157,7 +157,7 @@ void Interpreter::print()
 void Interpreter::print_reduced_form()
 {
 	if (has_excess_degree && result->term_map.size() != 1)
-		std::cout << "reduce form : (" << result->var_name << ")(" << *result << ") = 0\n";
+		std::cout << "reduced form : (" << result->var_name << ")(" << *result << ") = 0\n";
 	else
 	{
 		std::cout << "reduced form : " << *result;
