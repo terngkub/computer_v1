@@ -1,6 +1,7 @@
-#include "main.hpp"
-#include <string>
 #include "interpreter.hpp"
+#include "main.hpp"
+#include "output.hpp"
+#include <string>
 
 int main(int argc, char** argv)
 {
@@ -10,7 +11,6 @@ int main(int argc, char** argv)
         return 1;
     }
     std::string input(argv[1]);
-    std::cout << "input        : " << input << "\n";
 
     Lexer lexer(input);
     Parser parser(lexer);
@@ -24,5 +24,6 @@ int main(int argc, char** argv)
     std::cout << "parsed form  : " << ast << "\n";
 
     auto interpreter = Interpreter(ast);
-    interpreter.interpret();
+    auto output = interpreter.interpret();
+    std::cout << output;
 }

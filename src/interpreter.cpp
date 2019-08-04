@@ -1,6 +1,7 @@
 #include "interpreter.hpp"
 #include "math.hpp"
 #include <iostream>
+#include <sstream>
 
 Interpreter::Interpreter(std::shared_ptr<INode> ast) :
 	ast(ast),
@@ -98,7 +99,7 @@ void Interpreter::solve()
 
 void Interpreter::solve_one_degree()
 {
-	if (has_divide && result->term_map[0] == 0)
+	if (has_divide && result->term_map.find(0) == result->term_map.end())
 		return;
 	else if (result->term_map[0] == 0)
 		solution.push_back(Complex(0, 0));
@@ -147,58 +148,63 @@ void Interpreter::get_two_degree_solution()
 		solution.push_back(ret_two);
 }
 
-void Interpreter::print()
+Output Interpreter::get_output()
 {
-	print_reduced_form();
-	print_degree();
-	print_solution();
+	Output output;
+	output.reduced_form = get_reduced_form();
+	output.degree = get_degree();
+	output.has_limit = has_divide ? true : false;
+		output.has_limit = true;
+	output.solution = get_solution();
+	return output;
 }
 
-void Interpreter::print_reduced_form()
+std::string Interpreter::get_reduced_form()
 {
+	std::stringstream ss;
+
 	if (has_excess_degree && result->term_map.size() != 1)
-		std::cout << "reduced form : (" << result->var_name << ")(" << *result << ") = 0\n";
+		ss << "(" << result->var_name << ")(" << *result << ") = 0";
 	else
 	{
-		std::cout << "reduced form : " << *result;
+		ss << *result;
 		if (result->term_map.size() != 1 || result->term_map.begin()->first != 0)
-			std::cout << " = 0";
-		std::cout << "\n";
+			ss << " = 0";
 	}
+	return ss.str();
 }
 
-void Interpreter::print_degree()
+int Interpreter::get_degree()
 {
-	auto end = result->term_map.rbegin();
-	auto degree = has_excess_degree ? end->first + 1 : end->first;
-	std::cout << "degree       : " << degree << "\n";
+	auto end = result->term_map.rbegin()->first;
+	auto degree = has_excess_degree ? end + 1 : end;
+	return degree;
 }
 
-void Interpreter::print_solution()
+std::string Interpreter::get_solution()
 {
-	if (has_divide)
-		std::cout << "limitation   : x != 0\n";
+	std::stringstream ss;
 
 	if (result->term_map.rbegin()->first > 2)
-		std::cerr << "cannot handle degree greater than two\n";
+		ss << "cannot handle degree greater than two";
 	else if (solution.size() == 0)
-		std::cout << "no solution\n";
+		ss << "no solution";
 	else if (result->term_map.size() == 1 && result->term_map.rbegin()->first == 0)
-		std::cout << "solution     : " << *result << "\n";
+		ss << *result;
 	else
 	{
-		std::cout << "solution     : " << result->var_name << " = ";
+		ss << result->var_name << " = ";
 		for (auto it = solution.begin(); it != solution.end(); ++it)
 		{
 			if (it != solution.begin())
-				std::cout << ", ";
-			std::cout << *it;
+				ss << ", ";
+			ss << *it;
 		}
-		std::cout << "\n";
 	}
+	return ss.str();
 }
 
-void Interpreter::interpret()
+Output Interpreter::interpret()
 {
 	auto result_inode = visit(ast);
 	if (is_type<ExprNode>(result_inode))
@@ -206,11 +212,12 @@ void Interpreter::interpret()
 		result = std::make_shared<ExprNode>(*std::dynamic_pointer_cast<ExprNode>(result_inode));
 		clean_result();
 		solve();
-		print();
+		return get_output();
 	}
 	else if (is_type<ErrorNode>(result_inode))
 	{
 		auto error_node = std::dynamic_pointer_cast<ErrorNode>(result_inode);
-		std::cerr << error_node->message << "\n";
+		return Output(error_node->message);
 	}
+	return Output("invalid node type from Interpret::visit()");
 }

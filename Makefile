@@ -23,7 +23,8 @@ FILE =	complex.cpp \
 		lexer.cpp \
 		ast.cpp \
 		parser.cpp \
-		interpreter.cpp
+		interpreter.cpp \
+		output.cpp
 
 SRC_FILE = $(MAIN) $(FILE)
 SRC_DIR = src
