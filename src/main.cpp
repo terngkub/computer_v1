@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     }
     std::cout << "parsed form  : " << ast << "\n";
 
-    auto interpreter = Interpreter(ast);
+    Interpreter interpreter(ast);
     auto output = interpreter.interpret();
     std::cout << output;
 }

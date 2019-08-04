@@ -61,7 +61,8 @@ TEST_NAME = computor_test
 
 TEST_FILE = test_main.cpp \
 			test_lexer.cpp \
-			test_ast.cpp
+			test_ast.cpp \
+			test_interpreter.cpp
 
 TEST_DIR = test
 TEST = $(addprefix $(TEST_DIR)/,$(TEST_FILE))

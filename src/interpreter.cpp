@@ -5,7 +5,8 @@
 
 Interpreter::Interpreter(std::shared_ptr<INode> ast) :
 	ast(ast),
-	has_divide(false)
+	has_divide(false),
+	has_equal(false)
 {}
 
 INodePtr Interpreter::visit(INodePtr node)
@@ -47,7 +48,8 @@ INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 			case TokenType::POWER:
 				return std::make_shared<ExprNode>(*left ^ *right);
 			case TokenType::EQUAL:
-				return equal(left, right);
+				has_equal = true;
+				return std::make_shared<ExprNode>(*left - *right);
 			default:
 				return std::make_shared<ErrorNode>("unsupported operator");
 		}
@@ -57,14 +59,6 @@ INodePtr Interpreter::operate(OptPtr op_node, ExprPtr left, ExprPtr right)
 		return std::make_shared<ErrorNode>(e.what());
 	}
 	return std::make_shared<ErrorNode>("undefined operator");
-}
-
-INodePtr Interpreter::equal(ExprPtr left, ExprPtr right)
-{
-	auto ret = std::make_shared<ExprNode>(*left - *right);
-	if (ret->term_map.rbegin()->first == 0)
-		return std::make_shared<ErrorNode>("need variable in equation");
-	return ret;
 }
 
 void Interpreter::clean_result()
@@ -151,11 +145,23 @@ void Interpreter::get_two_degree_solution()
 Output Interpreter::get_output()
 {
 	Output output;
-	output.reduced_form = get_reduced_form();
-	output.degree = get_degree();
-	output.has_limit = has_divide ? true : false;
-		output.has_limit = true;
-	output.solution = get_solution();
+	if (result->var_name != "" && result->term_map.find(0) != result->term_map.end() && result->term_map[0] == 0)
+	{
+		output.reduced_form = "0 = 0";
+		output.has_limit = has_divide;
+		output.solution = result->var_name + " can be any number";
+	}
+	else if (result->var_name == "" && has_equal)
+	{
+		output.error = "need variable in equation";
+	}
+	else
+	{
+		output.reduced_form = get_reduced_form();
+		output.degree = get_degree();
+		output.has_limit = has_divide;
+		output.solution = get_solution();
+	}
 	return output;
 }
 

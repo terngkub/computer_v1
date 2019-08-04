@@ -1,11 +1,20 @@
 #include "output.hpp"
 #include <iostream>
 
-Output::Output()
+Output::Output() :
+	reduced_form(""),
+	degree(0),
+	has_limit(false),
+	solution(""),
+	error("")
 {}
 
 Output::Output(std::string error) :
-  error(error)
+	reduced_form(""),
+	degree(0),
+	has_limit(false),
+	solution(""),
+	error(error)
 {}
 
 std::ostream & operator<<(std::ostream & o, Output const & output)
