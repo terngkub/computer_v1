@@ -83,7 +83,7 @@ void Interpreter::solve()
 {
 	auto end = result->term_map.rbegin();
 
-	if (result->term_map.size() == 1 && end->first == 0)
+	if (result->term_map.size() == 1 && end->first == 0 && result->var_name == "")
 		solution.push_back(Complex(result->term_map[0], 0));
 	else if (end->first == 1)
 		solve_one_degree();
@@ -95,7 +95,7 @@ void Interpreter::solve_one_degree()
 {
 	if (has_divide && result->term_map.find(0) == result->term_map.end())
 		return;
-	else if (result->term_map[0] == 0)
+	else if (result->term_map.find(0) == result->term_map.end())
 		solution.push_back(Complex(0, 0));
 	else if (has_excess_degree && !has_divide)
 	{
@@ -174,7 +174,7 @@ std::string Interpreter::get_reduced_form()
 	else
 	{
 		ss << *result;
-		if (result->term_map.size() != 1 || result->term_map.begin()->first != 0)
+		if (result->term_map.size() != 1 || result->var_name != "")
 			ss << " = 0";
 	}
 	return ss.str();

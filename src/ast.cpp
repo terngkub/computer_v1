@@ -213,14 +213,18 @@ ExprNode operator/(ExprNode const & lhs, ExprNode const & rhs)
 ExprNode operator^(ExprNode const & lhs, ExprNode const & rhs)
 {
 	if (rhs.contain_variable())
-		throw std::runtime_error("operation '^': degree cannot container variable(s)");
+		throw std::runtime_error("operation '^': degree cannot containe variable(s)");
 
 	auto degree = rhs.term_map.at(0);
 
 	if (degree < 0)
 		throw std::runtime_error("operation '^': degree cannot be negative number");
 	if (degree == 0)
-		return ExprNode(1);
+	{
+		ExprNode ret(1);
+		ret.var_name = lhs.var_name;
+		return ret;
+	}
 	if (degree ==  1)
 		return lhs;
 

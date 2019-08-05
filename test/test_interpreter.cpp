@@ -177,4 +177,40 @@ TEST_CASE("special case", "[interpreter]")
         REQUIRE(output.solution == "x can be any number");
         REQUIRE(output.error == "");
     }
+    SECTION("solution can be any numbers, power zero")
+    {
+        auto output = get_output("x^0 = x^0");
+        REQUIRE(output.reduced_form == "0 = 0");
+        REQUIRE(output.degree == 0);
+        REQUIRE(output.has_limit == false);
+        REQUIRE(output.solution == "x can be any number");
+        REQUIRE(output.error == "");
+    }
+    SECTION("solution can be any numbers, power two")
+    {
+        auto output = get_output("x^2 = x^2");
+        REQUIRE(output.reduced_form == "0 = 0");
+        REQUIRE(output.degree == 0);
+        REQUIRE(output.has_limit == false);
+        REQUIRE(output.solution == "x can be any number");
+        REQUIRE(output.error == "");
+    }
+    SECTION("no solution with two side variables")
+    {
+        auto output = get_output("4x^0 = 5x^0");
+        REQUIRE(output.reduced_form == "-1 = 0");
+        REQUIRE(output.degree == 0);
+        REQUIRE(output.has_limit == false);
+        REQUIRE(output.solution == "no solution");
+        REQUIRE(output.error == "");
+    }
+    SECTION("two side variables with solution")
+    {
+        auto output = get_output("4x = 5x");
+        REQUIRE(output.reduced_form == "x = 0");
+        REQUIRE(output.degree == 1);
+        REQUIRE(output.has_limit == false);
+        REQUIRE(output.solution == "x = 0");
+        REQUIRE(output.error == "");
+    }
 }
