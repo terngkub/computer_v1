@@ -13,7 +13,6 @@ std::shared_ptr<INode> Parser::parse()
 	if (is_type<ErrorNode>(ast))
 		return ast;
 	if (current_token->type != TokenType::END)
-		// TODO make error message more clear
 		return error("not ending");
 	return ast;
 }
@@ -43,7 +42,6 @@ std::shared_ptr<INode> Parser::equation()
 {
 	std::shared_ptr<INode> node = expression();
 
-	// TODO after expression can other thing left out to polute here
 	while (!is_type<ErrorNode>(node) && current_token->type == TokenType::EQUAL)
 	{
 		if (has_equal)
@@ -71,7 +69,6 @@ std::shared_ptr<INode> Parser::expression()
 {
 	std::shared_ptr<INode> node = term();
 
-	// TODO handle negative number
 	while (!is_type<ErrorNode>(node)
 			&& (current_token->type == TokenType::PLUS
 			|| is_minus()))
@@ -106,7 +103,6 @@ std::shared_ptr<INode> Parser::term()
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
 			return error(err->message);
-		// TODO handle modulo combination
 		node = std::make_shared<OptNode>(token_type, node, right);
 	}
 	return node;
