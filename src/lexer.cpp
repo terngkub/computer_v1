@@ -6,7 +6,7 @@ Lexer::Lexer(std::string text) :
 	it(str.begin())
 {}
 
-std::shared_ptr<Token> Lexer::get_next_token()
+TokenPtr Lexer::get_next_token()
 {
 	while (it != str.end() && isspace(*it))
 		++it;
@@ -31,7 +31,7 @@ std::shared_ptr<Token> Lexer::get_next_token()
 	return get_error();
 }
 
-std::shared_ptr<Token> Lexer::get_number()
+TokenPtr Lexer::get_number()
 {
 	std::string buf;
 	bool dot = false;
@@ -50,7 +50,7 @@ std::shared_ptr<Token> Lexer::get_number()
 	return std::make_shared<Token>(TokenType::NUMBER, value);
 }
 
-std::shared_ptr<Token> Lexer::get_variable()
+TokenPtr Lexer::get_variable()
 {
 	std::string buf;
 	while (it != str.end() && isalpha(*it))
@@ -61,7 +61,7 @@ std::shared_ptr<Token> Lexer::get_variable()
 	return std::make_shared<Token>(TokenType::VARIABLE, buf);
 }
 
-std::shared_ptr<Token> Lexer::get_error()
+TokenPtr Lexer::get_error()
 {
 	std::stringstream err;
 	err << "invalid character '" << *it << "' at index " << it - str.begin();

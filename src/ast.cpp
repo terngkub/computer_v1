@@ -1,7 +1,7 @@
 #include "ast.hpp"
 
 // INode
-std::ostream & operator<<(std::ostream & o, std::shared_ptr<INode> node)
+std::ostream & operator<<(std::ostream & o, INodePtr node)
 {
     auto err_node = std::dynamic_pointer_cast<ErrorNode>(node);
     if (err_node)
@@ -41,7 +41,7 @@ std::ostream & operator<<(std::ostream & o, ErrorNode const & node)
 
 // OptNode
 
-OptNode::OptNode(enum TokenType op, std::shared_ptr<INode> left, std::shared_ptr<INode> right) :
+OptNode::OptNode(enum TokenType op, INodePtr left, INodePtr right) :
 	op(op),
 	left(left),
 	right(right)

@@ -32,6 +32,6 @@ class Interpreter
 	std::string	get_solution();
 
 public:
-	Interpreter(std::shared_ptr<INode>);
+	Interpreter(INodePtr);
 	Output interpret();
 };

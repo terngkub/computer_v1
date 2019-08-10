@@ -10,7 +10,7 @@ struct Parser
 	INodePtr	parse();
 
 private:
-	typedef std::shared_ptr<INode> (Parser::*ParserFunc)();
+	typedef INodePtr (Parser::*ParserFunc)();
 
 	Lexer &		lexer;
 	TokenPtr	prev_token;

@@ -7,9 +7,9 @@ Parser::Parser(Lexer & lexer) :
 	has_equal(false)
 {}
 
-std::shared_ptr<INode> Parser::parse()
+INodePtr Parser::parse()
 {
-	std::shared_ptr<INode> ast = equation();
+	INodePtr ast = equation();
 	if (is_type<ErrorNode>(ast))
 		return ast;
 	if (current_token->type != TokenType::END)
@@ -32,15 +32,15 @@ bool Parser::is_minus()
 }
 
 // ERROR
-std::shared_ptr<INode> Parser::error(std::string error_message)
+INodePtr Parser::error(std::string error_message)
 {
 	return std::dynamic_pointer_cast<INode>(std::make_shared<ErrorNode>(error_message));
 }
 
 // EQUAL
-std::shared_ptr<INode> Parser::equation()
+INodePtr Parser::equation()
 {
-	std::shared_ptr<INode> node = expression();
+	INodePtr node = expression();
 
 	while (!is_type<ErrorNode>(node) && current_token->type == TokenType::EQUAL)
 	{
@@ -52,7 +52,7 @@ std::shared_ptr<INode> Parser::equation()
 		TokenType token_type = current_token->type;
 		get_next_token();
 
-		std::shared_ptr<INode> right = expression();
+		INodePtr right = expression();
 
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
@@ -65,9 +65,9 @@ std::shared_ptr<INode> Parser::equation()
 
 
 // PLUS, MINUS
-std::shared_ptr<INode> Parser::expression()
+INodePtr Parser::expression()
 {
-	std::shared_ptr<INode> node = term();
+	INodePtr node = term();
 
 	while (!is_type<ErrorNode>(node)
 			&& (current_token->type == TokenType::PLUS
@@ -75,7 +75,7 @@ std::shared_ptr<INode> Parser::expression()
 	{
 		TokenType token_type = current_token->type;
 		get_next_token();
-		std::shared_ptr<INode> right = term();
+		INodePtr right = term();
 
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
@@ -87,9 +87,9 @@ std::shared_ptr<INode> Parser::expression()
 }
 
 // MULTIPLY, DIVIDE, MODULO
-std::shared_ptr<INode> Parser::term()
+INodePtr Parser::term()
 {
-	std::shared_ptr<INode> node = power();
+	INodePtr node = power();
 
 	while (!is_type<ErrorNode>(node)
 			&& (current_token->type == TokenType::MULTIPLY
@@ -98,7 +98,7 @@ std::shared_ptr<INode> Parser::term()
 	{
 		TokenType token_type = current_token->type;
 		get_next_token();
-		std::shared_ptr<INode> right = power();
+		INodePtr right = power();
 
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
@@ -109,16 +109,16 @@ std::shared_ptr<INode> Parser::term()
 }
 
 // POWER
-std::shared_ptr<INode> Parser::power()
+INodePtr Parser::power()
 {
-	std::shared_ptr<INode> node = factor();
+	INodePtr node = factor();
 
 	while (!is_type<ErrorNode>(node)
 			&& current_token->type == TokenType::POWER)
 	{
 		TokenType token_type = current_token->type;
 		get_next_token();
-		std::shared_ptr<INode> right = factor();
+		INodePtr right = factor();
 
 		auto err = std::dynamic_pointer_cast<ErrorNode>(right);
 		if (err != nullptr)
@@ -129,7 +129,7 @@ std::shared_ptr<INode> Parser::power()
 }
 
 // NUMBER, VARIABLE
-std::shared_ptr<INode> Parser::factor()
+INodePtr Parser::factor()
 {
 	bool neg = false;
 	if (current_token->type == TokenType::MINUS)

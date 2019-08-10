@@ -10,14 +10,15 @@ struct INode
 {
 	virtual ~INode() {};
 };
+typedef std::shared_ptr<INode> INodePtr;
 
 template <typename T>
-bool is_type(std::shared_ptr<INode> node)
+bool is_type(INodePtr node)
 {
 	return (std::dynamic_pointer_cast<T>(node) != nullptr) ? true : false;
 }
 
-std::ostream & operator<<(std::ostream & o, std::shared_ptr<INode> node);
+std::ostream & operator<<(std::ostream & o, INodePtr node);
 
 
 
@@ -29,7 +30,7 @@ struct ErrorNode : public INode
 
 	ErrorNode(std::string message);
 };
-
+typedef std::shared_ptr<ErrorNode> ErrorPtr;
 std::ostream & operator<<(std::ostream & o, ErrorNode const & t);
 
 
@@ -38,13 +39,13 @@ std::ostream & operator<<(std::ostream & o, ErrorNode const & t);
 
 struct OptNode : public INode
 {
-	enum TokenType			op;
-	std::shared_ptr<INode>	left;
-	std::shared_ptr<INode>	right;
+	enum TokenType	op;
+	INodePtr		left;
+	INodePtr		right;
 
-	OptNode(enum TokenType, std::shared_ptr<INode>, std::shared_ptr<INode>);
+	OptNode(enum TokenType, INodePtr, INodePtr);
 };
-
+typedef std::shared_ptr<OptNode> OptPtr;
 std::ostream & operator<<(std::ostream & o, OptNode const & t);
 
 
@@ -64,6 +65,7 @@ struct ExprNode : public INode
 	bool remove_negative_degree();
 	bool remove_excess_degree();
 };
+typedef std::shared_ptr<ExprNode> ExprPtr;
 
 ExprNode operator+(ExprNode const & lhs, ExprNode const & rhs);
 ExprNode operator-(ExprNode const & lhs, ExprNode const & rhs);
@@ -72,12 +74,3 @@ ExprNode operator/(ExprNode const & lhs, ExprNode const & rhs);
 ExprNode operator^(ExprNode const & lhs, ExprNode const & rhs);
 bool operator==(ExprNode const & lhs, ExprNode const & rhs);
 std::ostream & operator<<(std::ostream & o, ExprNode const & t);
-
-
-
-// Typedef
-
-typedef std::shared_ptr<INode> INodePtr;
-typedef std::shared_ptr<ErrorNode> ErrorPtr;
-typedef std::shared_ptr<OptNode> OptPtr;
-typedef std::shared_ptr<ExprNode> ExprPtr;

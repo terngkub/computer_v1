@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-Interpreter::Interpreter(std::shared_ptr<INode> ast) :
+Interpreter::Interpreter(INodePtr ast) :
 	ast(ast),
 	has_divide(false),
 	has_equal(false)
